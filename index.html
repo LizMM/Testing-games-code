@@ -373,18 +373,19 @@
       <p id="todayDate"></p>
       <p>Play 2 puzzles per level</p>
       <div class="score-display" id="todayScore">0/600</div>
+      <p id="storageWarning" style="font-size: 10px; color: #dc2626; display: none;">⚠️ Scores won't save</p>
     </div>
     
     <div class="difficulty-buttons">
-      <button class="difficulty-btn easy" id="easyBtn">
+      <button class="difficulty-btn easy" onclick="startGame('easy')">
         😊 Easy
         <div class="puzzle-status" id="easyStatus">0/2 done</div>
       </button>
-      <button class="difficulty-btn medium" id="mediumBtn">
+      <button class="difficulty-btn medium" onclick="startGame('medium')">
         🤔 Medium
         <div class="puzzle-status" id="mediumStatus">0/2 done</div>
       </button>
-      <button class="difficulty-btn hard" id="hardBtn">
+      <button class="difficulty-btn hard" onclick="startGame('hard')">
         🤯 Hard
         <div class="puzzle-status" id="hardStatus">0/2 done</div>
       </button>
@@ -424,309 +425,52 @@
   <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
 
   <script>
-    // PUZZLE CATALOGUE - add in additional puzzles here
-    
-const puzzleCatalogue = {
-  easy: [
-    // Week 1
-    { name: "Set 1", groups: [
-      { name: "Fruits", items: ["🍎", "🍌", "🍇", "🍊"] },
-      { name: "Animals", items: ["🐶", "🐱", "🐷", "🐮"] },
-      { name: "Vehicles", items: ["🚗", "🚌", "🚲", "✈️"] },
-      { name: "Weather", items: ["☀️", "🌧️", "🌩️", "❄️"] }
-    ]},
-    { name: "Set 2", groups: [
-      { name: "Colors", items: ["❤️", "💙", "💚", "💛"] },
-      { name: "Sports", items: ["⚽", "🏀", "⚾", "🏈"] },
-      { name: "Food", items: ["🍕", "🍔", "🌮", "🍜"] },
-      { name: "Sea Life", items: ["🐠", "🐙", "🦈", "🐬"] }
-    ]},
-    { name: "Set 3", groups: [
-      { name: "Faces", items: ["😀", "😂", "😍", "😎"] },
-      { name: "Birds", items: ["🦅", "🦆", "🦉", "🐧"] },
-      { name: "Flowers", items: ["🌹", "🌻", "🌷", "🌺"] },
-      { name: "Shapes", items: ["⭐", "❤️", "⚫", "🔵"] }
-    ]},
-    { name: "Set 4", groups: [
-      { name: "Farm", items: ["🐔", "🐴", "🐏", "🐄"] },
-      { name: "Snacks", items: ["🍿", "🍪", "🍩", "🧁"] },
-      { name: "Bugs", items: ["🐝", "🐞", "🦋", "🐛"] },
-      { name: "Desserts", items: ["🍰", "🍦", "🍫", "🍮"] }
-    ]},
-    
-    // Week 2
-    { name: "Set 5", groups: [
-      { name: "Drinks", items: ["🥤", "🧃", "🥛", "☕"] },
-      { name: "Jungle", items: ["🦁", "🐘", "🦒", "🐒"] },
-      { name: "Toys", items: ["🎮", "🧸", "🎲", "🪀"] },
-      { name: "School", items: ["📚", "✏️", "📏", "🖍️"] }
-    ]},
-    { name: "Set 6", groups: [
-      { name: "Pets", items: ["🐕", "🐈", "🐇", "🐹"] },
-      { name: "Fruit", items: ["🍓", "🍒", "🍑", "🍉"] },
-      { name: "Tools", items: ["🔨", "🔧", "✂️", "📌"] },
-      { name: "Music", items: ["🎵", "🎶", "🎸", "🎹"] }
-    ]},
-    { name: "Set 7", groups: [
-      { name: "Time", items: ["⏰", "⏱️", "⌛", "⌚"] },
-      { name: "Plants", items: ["🌲", "🌳", "🌴", "🌵"] },
-      { name: "Fast", items: ["🚀", "⚡", "💨", "🏃"] },
-      { name: "Night", items: ["🌙", "⭐", "🌟", "✨"] }
-    ]},
-    { name: "Set 8", groups: [
-      { name: "Baby", items: ["👶", "🍼", "👣", "🧷"] },
-      { name: "Cold", items: ["❄️", "🧊", "⛄", "🥶"] },
-      { name: "Hot", items: ["🔥", "☀️", "🌶️", "🥵"] },
-      { name: "Water", items: ["💧", "🌊", "🏊", "🚿"] }
-    ]},
-    
-    // Week 3
-    { name: "Set 9", groups: [
-      { name: "Space", items: ["🌙", "⭐", "🪐", "🛸"] },
-      { name: "Clothes", items: ["👕", "👖", "👗", "👞"] },
-      { name: "Hands", items: ["👋", "👏", "👍", "✋"] },
-      { name: "Party", items: ["🎈", "🎂", "🎁", "🎉"] }
-    ]},
-    { name: "Set 10", groups: [
-      { name: "Beach", items: ["🏖️", "🏄", "🌊", "🐚"] },
-      { name: "Home", items: ["🏠", "🛏️", "🚪", "🪟"] },
-      { name: "Kitchen", items: ["🍽️", "🥄", "🍴", "🔪"] },
-      { name: "Round", items: ["⚽", "🏀", "🎾", "⚾"] }
-    ]},
-    { name: "Set 11", groups: [
-      { name: "Red", items: ["🍎", "🍓", "🌹", "❤️"] },
-      { name: "Yellow", items: ["🍋", "🌻", "⭐", "🍌"] },
-      { name: "Green", items: ["🍀", "🌲", "🐸", "🥒"] },
-      { name: "Blue", items: ["🌊", "💙", "🦋", "🐳"] }
-    ]},
-    { name: "Set 12", groups: [
-      { name: "Wild", items: ["🦁", "🐯", "🐻", "🦊"] },
-      { name: "Small", items: ["🐜", "🐝", "🐛", "🐞"] },
-      { name: "Flying", items: ["🦅", "🦆", "🐦", "🦜"] },
-      { name: "Pets", items: ["🐕", "🐈", "🐇", "🐹"] }
-    ]},
-    
-    // Week 4
-    { name: "Set 13", groups: [
-      { name: "Sweet", items: ["🍰", "🍪", "🍭", "🧁"] },
-      { name: "Pizza", items: ["🍕", "🧀", "🍅", "🫒"] },
-      { name: "Breakfast", items: ["🥞", "🥓", "🍳", "🥐"] },
-      { name: "Fruits", items: ["🍎", "🍊", "🍇", "🍓"] }
-    ]},
-    { name: "Set 14", groups: [
-      { name: "Happy", items: ["😀", "😄", "😊", "🥳"] },
-      { name: "Love", items: ["😍", "🥰", "😘", "💕"] },
-      { name: "Cool", items: ["😎", "🤩", "😏", "🤠"] },
-      { name: "Silly", items: ["🤪", "😜", "😝", "🤓"] }
-    ]},
-    { name: "Set 15", groups: [
-      { name: "Transport", items: ["🚂", "🚁", "⛵", "🚕"] },
-      { name: "Buildings", items: ["🏠", "🏫", "🏥", "🏪"] },
-      { name: "Nature", items: ["🌳", "🌺", "🍄", "🌈"] },
-      { name: "Sky", items: ["☁️", "⛅", "🌤️", "🌥️"] }
-    ]}
-  ],
-  
-  medium: [
-    // Week 1
-    { name: "Set 1", groups: [
-      { name: "Buildings", items: ["🏠", "🏫", "🏥", "🏪"] },
-      { name: "Nature", items: ["🌲", "🌻", "🍄", "🌵"] },
-      { name: "Space", items: ["🌙", "⭐", "🌎", "🚀"] },
-      { name: "Party", items: ["🎈", "🎂", "🎁", "🎉"] }
-    ]},
-    { name: "Set 2", groups: [
-      { name: "Tools", items: ["🔨", "🔧", "✂️", "🔪"] },
-      { name: "Music", items: ["🎸", "🎹", "🥁", "🎺"] },
-      { name: "Clothes", items: ["👕", "👖", "👗", "👞"] },
-      { name: "Faces", items: ["😀", "😂", "😍", "😎"] }
-    ]},
-    { name: "Set 3", groups: [
-      { name: "Office", items: ["💼", "📎", "📌", "🖇️"] },
-      { name: "Tech", items: ["💻", "📱", "⌨️", "🖱️"] },
-      { name: "Art", items: ["🎨", "🖌️", "✏️", "🖍️"] },
-      { name: "Books", items: ["📖", "📚", "📝", "📄"] }
-    ]},
-    { name: "Set 4", groups: [
-      { name: "Sports", items: ["🏃", "🏊", "🚴", "⛷️"] },
-      { name: "Signs", items: ["⚠️", "🚫", "✅", "❌"] },
-      { name: "Weather", items: ["🌈", "⚡", "🌪️", "🌫️"] },
-      { name: "Seasons", items: ["🌸", "☀️", "🍂", "❄️"] }
-    ]},
-    
-    // Week 2
-    { name: "Set 5", groups: [
-      { name: "Fast", items: ["🚀", "⚡", "🏎️", "💨"] },
-      { name: "Slow", items: ["🐌", "🦥", "🐢", "⏳"] },
-      { name: "Big", items: ["🐘", "🦕", "🏔️", "🌍"] },
-      { name: "Small", items: ["🐜", "🦠", "📌", "💎"] }
-    ]},
-    { name: "Set 6", groups: [
-      { name: "Light", items: ["💡", "🔦", "🕯️", "🔥"] },
-      { name: "Sound", items: ["🔊", "📢", "🔔", "📣"] },
-      { name: "Time", items: ["⏰", "⏱️", "⌛", "⌚"] },
-      { name: "Money", items: ["💰", "💵", "💳", "🪙"] }
-    ]},
-    { name: "Set 7", groups: [
-      { name: "Medical", items: ["💊", "💉", "🩹", "🌡️"] },
-      { name: "Garden", items: ["🌻", "🌷", "🌹", "🌺"] },
-      { name: "Kitchen", items: ["🍳", "🥘", "🔪", "🥄"] },
-      { name: "Bathroom", items: ["🚿", "🧼", "🪥", "🧴"] }
-    ]},
-    { name: "Set 8", groups: [
-      { name: "Communication", items: ["📞", "📧", "💬", "📬"] },
-      { name: "Travel", items: ["🗺️", "🧳", "✈️", "🏖️"] },
-      { name: "Safety", items: ["🛡️", "🔒", "🚨", "⚠️"] },
-      { name: "Celebration", items: ["🎊", "🎆", "🥳", "🍾"] }
-    ]},
-    
-    // Week 3
-    { name: "Set 9", groups: [
-      { name: "Recycling", items: ["♻️", "🗑️", "📦", "🧴"] },
-      { name: "Energy", items: ["🔋", "⚡", "☀️", "💨"] },
-      { name: "Water", items: ["💧", "🌊", "🚿", "⛲"] },
-      { name: "Earth", items: ["🌍", "🌱", "🌳", "🏔️"] }
-    ]},
-    { name: "Set 10", groups: [
-      { name: "Feelings", items: ["❤️", "💔", "😢", "😊"] },
-      { name: "Body", items: ["👁️", "👂", "👃", "👄"] },
-      { name: "Health", items: ["💪", "🧠", "❤️‍🩹", "🏃"] },
-      { name: "Food Groups", items: ["🥦", "🍎", "🥩", "🥛"] }
-    ]},
-    { name: "Set 11", groups: [
-      { name: "Morning", items: ["🌅", "☕", "🥐", "📰"] },
-      { name: "Afternoon", items: ["☀️", "🍽️", "📚", "💼"] },
-      { name: "Evening", items: ["🌆", "🍕", "📺", "🎮"] },
-      { name: "Night", items: ["🌙", "😴", "🛏️", "💤"] }
-    ]},
-    { name: "Set 12", groups: [
-      { name: "Winter", items: ["⛄", "🎿", "🧣", "🧤"] },
-      { name: "Spring", items: ["🌸", "🐣", "🌱", "🌼"] },
-      { name: "Summer", items: ["🏖️", "🍉", "☀️", "🏊"] },
-      { name: "Fall", items: ["🍂", "🎃", "🍁", "🌰"] }
-    ]},
-    
-    // Week 4
-    { name: "Set 13", groups: [
-      { name: "Directions", items: ["⬆️", "⬇️", "⬅️", "➡️"] },
-      { name: "Shapes", items: ["⭐", "❤️", "⚫", "🔺"] },
-      { name: "Numbers", items: ["1️⃣", "2️⃣", "3️⃣", "4️⃣"] },
-      { name: "Letters", items: ["🔤", "🔡", "🔠", "📝"] }
-    ]},
-    { name: "Set 14", groups: [
-      { name: "Cleaning", items: ["🧹", "🧽", "🧼", "🧺"] },
-      { name: "Cooking", items: ["🍳", "🥘", "🔪", "🧂"] },
-      { name: "Sewing", items: ["🧵", "🪡", "✂️", "🧶"] },
-      { name: "Fixing", items: ["🔨", "🔧", "🪛", "⚙️"] }
-    ]},
-    { name: "Set 15", groups: [
-      { name: "Circus", items: ["🎪", "🤹", "🎭", "🎠"] },
-      { name: "Magic", items: ["🎩", "✨", "🪄", "🔮"] },
-      { name: "Pirate", items: ["🏴‍☠️", "💎", "🗺️", "⚓"] },
-      { name: "Castle", items: ["🏰", "👑", "🗡️", "🛡️"] }
-    ]}
-  ],
-  
-  hard: [
-    // Week 1
-    { name: "Set 1", groups: [
-      { name: "Time", items: ["⏰", "⏱️", "⌛", "🕐"] },
-      { name: "Tech", items: ["💻", "📱", "⌨️", "🖱️"] },
-      { name: "Books", items: ["📖", "📚", "📝", "✏️"] },
-      { name: "Travel", items: ["🗺️", "🧳", "✈️", "🏖️"] }
-    ]},
-    { name: "Set 2", groups: [
-      { name: "Winter", items: ["⛄", "🎿", "🧣", "🧤"] },
-      { name: "Night", items: ["🌙", "⭐", "🦉", "🌃"] },
-      { name: "Garden", items: ["🌻", "🌷", "🌹", "🌺"] },
-      { name: "Kitchen", items: ["🍳", "🥘", "🔪", "🥄"] }
-    ]},
-    { name: "Set 3", groups: [
-      { name: "Science", items: ["🔬", "🧪", "🧬", "⚗️"] },
-      { name: "Math", items: ["➕", "➖", "✖️", "➗"] },
-      { name: "Geography", items: ["🗺️", "🧭", "🌍", "🏔️"] },
-      { name: "History", items: ["📜", "🏛️", "👑", "⚔️"] }
-    ]},
-    { name: "Set 4", groups: [
-      { name: "Emotions", items: ["❤️", "💔", "😊", "😢"] },
-      { name: "Thoughts", items: ["💭", "💡", "🧠", "🤔"] },
-      { name: "Communication", items: ["💬", "📞", "✉️", "📢"] },
-      { name: "Relationships", items: ["👨‍👩‍👧", "💑", "👫", "🤝"] }
-    ]},
-    
-    // Week 2
-    { name: "Set 5", groups: [
-      { name: "Beginning", items: ["🌱", "🐣", "🌅", "👶"] },
-      { name: "Middle", items: ["🌳", "🐔", "☀️", "🧑"] },
-      { name: "End", items: ["🍂", "🥚", "🌇", "👴"] },
-      { name: "Cycle", items: ["♻️", "🔄", "⏰", "🌙"] }
-    ]},
-    { name: "Set 6", groups: [
-      { name: "Creation", items: ["🎨", "✏️", "🎭", "🎵"] },
-      { name: "Destruction", items: ["💥", "🔥", "⚡", "🌪️"] },
-      { name: "Growth", items: ["📈", "🌱", "💪", "🧠"] },
-      { name: "Decay", items: ["📉", "🍂", "⏳", "🥀"] }
-    ]},
-    { name: "Set 7", groups: [
-      { name: "Vision", items: ["👁️", "👓", "🔍", "💡"] },
-      { name: "Hearing", items: ["👂", "🔊", "🎵", "📢"] },
-      { name: "Touch", items: ["✋", "🤝", "💆", "🧤"] },
-      { name: "Taste", items: ["👅", "🍴", "🍰", "🌶️"] }
-    ]},
-    { name: "Set 8", groups: [
-      { name: "Past", items: ["📜", "⏪", "🦕", "🏛️"] },
-      { name: "Present", items: ["📱", "⏸️", "🏙️", "📰"] },
-      { name: "Future", items: ["🚀", "⏩", "🤖", "🔮"] },
-      { name: "Timeless", items: ["♾️", "🌌", "⏳", "💎"] }
-    ]},
-    
-    // Week 3
-    { name: "Set 9", groups: [
-      { name: "Leaders", items: ["👑", "📊", "🎤", "🏆"] },
-      { name: "Helpers", items: ["🤝", "💪", "🛠️", "🆘"] },
-      { name: "Learners", items: ["📚", "🎓", "🧠", "📝"] },
-      { name: "Teachers", items: ["👨‍🏫", "📖", "💡", "🎯"] }
-    ]},
-    { name: "Set 10", groups: [
-      { name: "Problem", items: ["⚠️", "❌", "🚫", "⛔"] },
-      { name: "Solution", items: ["✅", "💡", "🔧", "🎯"] },
-      { name: "Question", items: ["❓", "🤔", "🔍", "📋"] },
-      { name: "Answer", items: ["💬", "📖", "🎓", "✔️"] }
-    ]},
-    { name: "Set 11", groups: [
-      { name: "Air", items: ["💨", "🎈", "🪁", "🌬️"] },
-      { name: "Earth", items: ["🌍", "🏔️", "🌱", "🪨"] },
-      { name: "Fire", items: ["🔥", "☀️", "⚡", "🌋"] },
-      { name: "Water", items: ["💧", "🌊", "❄️", "☔"] }
-    ]},
-    { name: "Set 12", groups: [
-      { name: "Cause", items: ["➡️", "💥", "🎯", "🔑"] },
-      { name: "Effect", items: ["⬅️", "💫", "🎁", "🏆"] },
-      { name: "Action", items: ["🏃", "🔨", "✍️", "🎬"] },
-      { name: "Result", items: ["🏁", "✔️", "🎯", "💯"] }
-    ]},
-    
-    // Week 4
-    { name: "Set 13", groups: [
-      { name: "Individual", items: ["👤", "🧍", "🙋", "💭"] },
-      { name: "Pair", items: ["👥", "💑", "🤝", "👫"] },
-      { name: "Group", items: ["👨‍👩‍👧‍👦", "🏘️", "🏫", "🏢"] },
-      { name: "Community", items: ["🌍", "🏙️", "🤲", "🌐"] }
-    ]},
-    { name: "Set 14", groups: [
-      { name: "Input", items: ["⬇️", "📥", "🎤", "⌨️"] },
-      { name: "Process", items: ["⚙️", "🔄", "💭", "🧮"] },
-      { name: "Output", items: ["⬆️", "📤", "🔊", "🖨️"] },
-      { name: "Feedback", items: ["🔁", "💬", "📊", "✅"] }
-    ]},
-    { name: "Set 15", groups: [
-      { name: "Observation", items: ["👀", "🔍", "📹", "📊"] },
-      { name: "Question", items: ["❓", "🤔", "💭", "📋"] },
-      { name: "Hypothesis", items: ["💡", "📝", "🎯", "🧪"] },
-      { name: "Experiment", items: ["🔬", "⚗️", "📈", "✅"] }
-    ]}
-  ]
-};
+    // PUZZLE CATALOGUE - Replace with the extended version provided separately
+    const puzzleCatalogue = {
+      easy: [
+        { name: "Set 1", groups: [
+          { name: "Fruits", items: ["🍎", "🍌", "🍇", "🍊"] },
+          { name: "Animals", items: ["🐶", "🐱", "🐷", "🐮"] },
+          { name: "Vehicles", items: ["🚗", "🚌", "🚲", "✈️"] },
+          { name: "Weather", items: ["☀️", "🌧️", "🌩️", "❄️"] }
+        ]},
+        { name: "Set 2", groups: [
+          { name: "Colors", items: ["❤️", "💙", "💚", "💛"] },
+          { name: "Sports", items: ["⚽", "🏀", "⚾", "🏈"] },
+          { name: "Food", items: ["🍕", "🍔", "🌮", "🍜"] },
+          { name: "Sea Life", items: ["🐠", "🐙", "🦈", "🐬"] }
+        ]},
+      ],
+      medium: [
+        { name: "Set 1", groups: [
+          { name: "Buildings", items: ["🏠", "🏫", "🏥", "🏪"] },
+          { name: "Nature", items: ["🌲", "🌻", "🍄", "🌵"] },
+          { name: "Space", items: ["🌙", "⭐", "🌎", "🚀"] },
+          { name: "Party", items: ["🎈", "🎂", "🎁", "🎉"] }
+        ]},
+        { name: "Set 2", groups: [
+          { name: "Tools", items: ["🔨", "🔧", "✂️", "🔪"] },
+          { name: "Music", items: ["🎸", "🎹", "🥁", "🎺"] },
+          { name: "Clothes", items: ["👕", "👖", "👗", "👞"] },
+          { name: "Faces", items: ["😀", "😂", "😍", "😎"] }
+        ]},
+      ],
+      hard: [
+        { name: "Set 1", groups: [
+          { name: "Time", items: ["⏰", "⏱️", "⌛", "🕐"] },
+          { name: "Tech", items: ["💻", "📱", "⌨️", "🖱️"] },
+          { name: "Books", items: ["📖", "📚", "📝", "✏️"] },
+          { name: "Travel", items: ["🗺️", "🧳", "✈️", "🏖️"] }
+        ]},
+        { name: "Set 2", groups: [
+          { name: "Winter", items: ["⛄", "🎿", "🧣", "🧤"] },
+          { name: "Night", items: ["🌙", "⭐", "🦉", "🌃"] },
+          { name: "Garden", items: ["🌻", "🌷", "🌹", "🌺"] },
+          { name: "Kitchen", items: ["🍳", "🥘", "🔪", "🥄"] }
+        ]},
+      ]
+    };
+
     // DAILY PUZZLE SELECTION
     function getDayOfYear() {
       const now = new Date();
@@ -752,18 +496,31 @@ const puzzleCatalogue = {
     }
 
     function loadDailyProgress() {
-      const key = getTodayKey();
-      const data = localStorage.getItem(`daily_${key}`);
-      return data ? JSON.parse(data) : {
-        easy: { completed: [] },
-        medium: { completed: [] },
-        hard: { completed: [] }
-      };
+      try {
+        const key = getTodayKey();
+        const data = localStorage.getItem(`daily_${key}`);
+        return data ? JSON.parse(data) : {
+          easy: { completed: [] },
+          medium: { completed: [] },
+          hard: { completed: [] }
+        };
+      } catch (e) {
+        console.warn('localStorage not available:', e);
+        return {
+          easy: { completed: [] },
+          medium: { completed: [] },
+          hard: { completed: [] }
+        };
+      }
     }
 
     function saveDailyProgress(progress) {
-      const key = getTodayKey();
-      localStorage.setItem(`daily_${key}`, JSON.stringify(progress));
+      try {
+        const key = getTodayKey();
+        localStorage.setItem(`daily_${key}`, JSON.stringify(progress));
+      } catch (e) {
+        console.warn('Cannot save progress:', e);
+      }
     }
 
     function calculateScore(progress) {
@@ -1094,9 +851,14 @@ const puzzleCatalogue = {
 
     // EVENT LISTENERS
     window.addEventListener('DOMContentLoaded', function() {
-      document.getElementById('easyBtn').addEventListener('click', () => startGame('easy'));
-      document.getElementById('mediumBtn').addEventListener('click', () => startGame('medium'));
-      document.getElementById('hardBtn').addEventListener('click', () => startGame('hard'));
+      // Check if localStorage is available
+      try {
+        localStorage.setItem('test', 'test');
+        localStorage.removeItem('test');
+      } catch (e) {
+        document.getElementById('storageWarning').style.display = 'block';
+      }
+      
       document.getElementById('checkBtn').addEventListener('click', checkGroup);
       document.getElementById('shuffleBtn').addEventListener('click', shuffleCards);
       document.getElementById('restartBtn').addEventListener('click', restart);
