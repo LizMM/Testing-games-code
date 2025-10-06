@@ -4,8 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>Kids Connections Game</title>
+  <title>Kids Connections - Daily Challenge</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
@@ -40,7 +39,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 15px;
       text-align: center;
     }
     
@@ -50,37 +49,60 @@
     
     .home-title {
       color: white;
-      font-size: 52px;
+      font-size: 38px;
       font-weight: 900;
-      text-shadow: 4px 4px 0 #FF1493, 6px 6px 0 #00CED1;
+      text-shadow: 3px 3px 0 #FF1493, 5px 5px 0 #00CED1;
       letter-spacing: 2px;
-      margin-bottom: 40px;
-      animation: bounce 2s infinite;
+      margin-bottom: 15px;
     }
     
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+    .daily-info {
+      background: white;
+      padding: 12px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      border: 3px solid #FF6B9D;
+      max-width: 350px;
+    }
+    
+    .daily-info h2 {
+      font-size: 18px;
+      color: #FF1493;
+      margin-bottom: 6px;
+    }
+    
+    .daily-info p {
+      font-size: 13px;
+      color: #333;
+      margin-bottom: 4px;
+    }
+    
+    .score-display {
+      font-size: 24px;
+      font-weight: 900;
+      color: #00CED1;
+      margin-top: 6px;
     }
     
     .difficulty-buttons {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 15px;
       width: 100%;
-      max-width: 400px;
+      max-width: 350px;
     }
     
     .difficulty-btn {
-      padding: 24px;
-      font-size: 28px;
+      padding: 18px;
+      font-size: 22px;
       font-weight: 900;
-      border-radius: 20px;
-      border: 5px solid white;
+      border-radius: 15px;
+      border: 4px solid white;
       cursor: pointer;
       color: white;
       transition: all 0.2s;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
       text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
     }
     
@@ -97,13 +119,18 @@
     }
     
     .difficulty-btn:hover {
-      transform: scale(1.05) rotate(2deg);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      transform: scale(1.03);
     }
     
-    /* GAME SCREEN */
+    .puzzle-status {
+      font-size: 12px;
+      margin-top: 6px;
+      opacity: 0.9;
+    }
+    
+    /* GAME SCREEN - ULTRA COMPACT FOR IPAD */
     .container {
-      padding: 6px;
+      padding: 4px;
       height: 100vh;
       display: flex;
       flex-direction: column;
@@ -115,110 +142,80 @@
       justify-content: center;
       align-items: center;
       position: relative;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       flex-shrink: 0;
     }
     
     h1 {
       color: white;
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 900;
-      text-shadow: 2px 2px 0 #FF1493, 4px 4px 0 #00CED1;
+      text-shadow: 2px 2px 0 #FF1493, 3px 3px 0 #00CED1;
       letter-spacing: 1px;
     }
     
-    .home-btn {
+    .home-btn, .sound-toggle {
       position: absolute;
-      left: 0;
       background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
-      border: 3px solid white;
+      border: 2px solid white;
       border-radius: 50%;
-      width: 38px;
-      height: 38px;
-      font-size: 18px;
+      width: 34px;
+      height: 34px;
+      font-size: 16px;
       cursor: pointer;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
       transition: transform 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     
-    .home-btn:hover { transform: scale(1.1) rotate(-10deg); }
-    
-    .sound-toggle {
-      position: absolute;
-      right: 0;
-      background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
-      border: 3px solid white;
-      border-radius: 50%;
-      width: 38px;
-      height: 38px;
-      font-size: 18px;
-      cursor: pointer;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-      transition: transform 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .sound-toggle:hover { transform: scale(1.1) rotate(10deg); }
+    .home-btn { left: 0; }
+    .sound-toggle { right: 0; }
     
     .puzzle-selector {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 5px;
+      gap: 6px;
+      margin-bottom: 3px;
       background: linear-gradient(135deg, #FF6B9D 0%, #FFA07A 100%);
-      padding: 6px;
-      border-radius: 10px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      padding: 4px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
       border: 2px solid white;
       flex-shrink: 0;
     }
     
     .puzzle-name {
-      font-size: 14px;
+      font-size: 11px;
       font-weight: 900;
       color: white;
-      min-width: 90px;
       text-align: center;
       text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
     }
     
     .nav-btn {
-      padding: 4px 10px;
-      font-size: 12px;
+      padding: 3px 8px;
+      font-size: 11px;
       font-weight: 700;
-      border-radius: 8px;
+      border-radius: 6px;
       border: 2px solid white;
       background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
       color: white;
       cursor: pointer;
-      transition: all 0.2s;
-      text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
     }
     
-    .nav-btn:hover:not(:disabled) {
-      background: linear-gradient(135deg, #FFA500 0%, #FF6347 100%);
-      transform: scale(1.05);
-    }
-    
-    .nav-btn:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
+    .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
     
     .strikes {
       text-align: center;
-      font-size: 16px;
-      margin-bottom: 4px;
+      font-size: 14px;
+      margin-bottom: 3px;
       background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
-      padding: 4px;
-      border-radius: 8px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      padding: 3px;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
       border: 2px solid white;
       font-weight: 900;
       color: white;
@@ -228,91 +225,69 @@
     
     .message {
       text-align: center;
-      margin-bottom: 5px;
-      padding: 6px;
+      margin-bottom: 3px;
+      padding: 4px;
       background: white;
-      border-radius: 10px;
+      border-radius: 8px;
       font-weight: 900;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-      font-size: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      font-size: 11px;
       border: 2px solid #FF6B9D;
       flex-shrink: 0;
     }
     
-    .message.win { 
-      color: #16a34a; 
-      font-size: 16px;
-      border-color: #16a34a;
-      animation: wiggle 0.5s ease;
-    }
-    .message.lose { 
-      color: #dc2626; 
-      font-size: 15px;
-      border-color: #dc2626;
-    }
-    
-    @keyframes wiggle {
-      0%, 100% { transform: rotate(0deg); }
-      25% { transform: rotate(-5deg); }
-      75% { transform: rotate(5deg); }
-    }
+    .message.win { color: #16a34a; font-size: 13px; border-color: #16a34a; }
+    .message.lose { color: #dc2626; font-size: 12px; border-color: #dc2626; }
     
     .found-groups {
-      margin-bottom: 5px;
+      margin-bottom: 3px;
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 3px;
       flex-shrink: 0;
     }
     
     .group-row {
       background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
-      padding: 6px;
-      border-radius: 10px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      padding: 4px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
       border: 2px solid white;
-      animation: slideDown 0.4s ease;
-    }
-    
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-20px) scale(0.9); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
     }
     
     .group-label {
-      font-size: 11px;
+      font-size: 9px;
       font-weight: 900;
       color: white;
       text-align: center;
-      margin-bottom: 5px;
+      margin-bottom: 3px;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
     }
     
     .group-items {
       display: flex;
       justify-content: center;
-      gap: 5px;
-      flex-wrap: wrap;
+      gap: 3px;
     }
     
     .grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-bottom: 6px;
+      gap: 5px;
+      margin-bottom: 4px;
       flex-grow: 1;
       align-content: center;
     }
     
     .card {
-      font-size: 34px;
-      padding: 12px;
+      font-size: 28px;
+      padding: 8px;
       text-align: center;
-      border-radius: 12px;
+      border-radius: 8px;
       background: linear-gradient(135deg, #FFFFFF 0%, #F0F8FF 100%);
-      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
       cursor: pointer;
       transition: all 0.2s;
       user-select: none;
@@ -320,95 +295,58 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 3px solid #FFD93D;
+      border: 2px solid #FFD93D;
     }
     
-    .card:hover { 
-      transform: translateY(-2px) rotate(2deg);
-      box-shadow: 0 5px 14px rgba(0,0,0,0.3);
-      border-color: #FF6B9D;
-    }
-    
+    .card:hover { transform: translateY(-2px); border-color: #FF6B9D; }
     .card.selected {
       background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
-      border: 3px solid #FF1493;
-      transform: translateY(-2px) scale(1.05) rotate(-2deg);
-      box-shadow: 0 5px 14px rgba(255,20,147,0.5);
+      border: 2px solid #FF1493;
+      transform: scale(1.05);
     }
-    
     .card.found {
       background: linear-gradient(135deg, #00FA9A 0%, #00CED1 100%);
       color: white;
-      font-size: 28px;
+      font-size: 24px;
       border: 2px solid white;
-      text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
     }
     
     .buttons {
       display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
+      gap: 4px;
       justify-content: center;
-      margin-bottom: 5px;
+      margin-bottom: 3px;
       flex-shrink: 0;
     }
     
     .btn {
-      padding: 8px 14px;
-      font-size: 13px;
+      padding: 6px 10px;
+      font-size: 11px;
       font-weight: 900;
-      border-radius: 10px;
+      border-radius: 6px;
       border: 2px solid white;
       cursor: pointer;
       background: linear-gradient(135deg, #C8B6FF 0%, #9D84FF 100%);
       color: white;
       transition: all 0.2s;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-      text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
-    }
-    
-    .btn:hover:not(:disabled) {
-      transform: translateY(-2px) scale(1.05);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
     
     .btn.primary {
       background: linear-gradient(135deg, #FF6B9D 0%, #FF1493 100%);
-      font-size: 14px;
+      font-size: 12px;
     }
     
-    .btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
     
     .hint {
       text-align: center;
       color: white;
-      font-size: 11px;
+      font-size: 9px;
       font-weight: 700;
-      text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
       flex-shrink: 0;
     }
     
-    .stars {
-      position: fixed;
-      top: 100px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 4rem;
-      pointer-events: none;
-      z-index: 1000;
-      animation: starPop 1s ease;
-    }
-    
-    @keyframes starPop {
-      0% { opacity: 0; transform: translateX(-50%) translateY(-30px) scale(0.5); }
-      50% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1.2); }
-      100% { opacity: 0; transform: translateX(-50%) translateY(-30px) scale(0.8); }
-    }
-    
-    /* CONFETTI */
     .confetti-canvas {
       position: fixed;
       top: 0;
@@ -420,18 +358,8 @@
     }
     
     @media (max-width: 768px) {
-      h1 { font-size: 28px; }
-      .grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
-      .card { font-size: 40px; padding: 16px; }
-      .card.found { font-size: 36px; }
-    }
-    
-    @media (max-width: 480px) {
-      .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-      .card { font-size: 36px; padding: 14px; }
-      .card.found { font-size: 32px; }
-      .home-title { font-size: 40px; }
-      .difficulty-btn { font-size: 24px; padding: 20px; }
+      .card { font-size: 26px; padding: 6px; }
+      .card.found { font-size: 22px; }
     }
   </style>
 </head>
@@ -439,15 +367,26 @@
   <!-- HOME SCREEN -->
   <div id="homeScreen" class="screen home-screen active">
     <h1 class="home-title">Kids Connections</h1>
+    
+    <div class="daily-info">
+      <h2>Today's Challenge</h2>
+      <p id="todayDate"></p>
+      <p>Play 2 puzzles per level</p>
+      <div class="score-display" id="todayScore">0/600</div>
+    </div>
+    
     <div class="difficulty-buttons">
       <button class="difficulty-btn easy" id="easyBtn">
         😊 Easy
+        <div class="puzzle-status" id="easyStatus">0/2 done</div>
       </button>
       <button class="difficulty-btn medium" id="mediumBtn">
         🤔 Medium
+        <div class="puzzle-status" id="mediumStatus">0/2 done</div>
       </button>
       <button class="difficulty-btn hard" id="hardBtn">
         🤯 Hard
+        <div class="puzzle-status" id="hardStatus">0/2 done</div>
       </button>
     </div>
   </div>
@@ -457,7 +396,7 @@
     <div class="container">
       <div class="header">
         <button class="home-btn" id="homeBtn">🏠</button>
-        <h1>Kids Connections</h1>
+        <h1 id="gameTitle">Kids Connections</h1>
         <button class="sound-toggle" id="soundToggle">🔊</button>
       </div>
       
@@ -478,78 +417,364 @@
         <button class="btn" id="restartBtn">Restart</button>
       </div>
       
-      <div class="hint">💡 Tap cards again to deselect!</div>
+      <div class="hint">Tap to deselect!</div>
     </div>
   </div>
 
   <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
 
   <script>
-    // Puzzles data organized by difficulty
-    const puzzlesByDifficulty = {
-      easy: [
-        {
-          name: "Easy Set 1",
-          groups: [
-            { name: "Fruits", items: ["🍎", "🍌", "🍇", "🍊"] },
-            { name: "Animals", items: ["🐶", "🐱", "🐷", "🐮"] },
-            { name: "Vehicles", items: ["🚗", "🚌", "🚲", "✈️"] },
-            { name: "Weather", items: ["☀️", "🌧️", "🌩️", "❄️"] }
-          ]
-        },
-        {
-          name: "Easy Set 2",
-          groups: [
-            { name: "Colors", items: ["❤️", "💙", "💚", "💛"] },
-            { name: "Sports", items: ["⚽", "🏀", "⚾", "🏈"] },
-            { name: "Food", items: ["🍕", "🍔", "🌮", "🍜"] },
-            { name: "Sea Life", items: ["🐠", "🐙", "🦈", "🐬"] }
-          ]
-        }
-      ],
-      medium: [
-        {
-          name: "Medium Set 1",
-          groups: [
-            { name: "Buildings", items: ["🏠", "🏫", "🏥", "🏪"] },
-            { name: "Nature", items: ["🌲", "🌻", "🍄", "🌵"] },
-            { name: "Space", items: ["🌙", "⭐", "🌎", "🚀"] },
-            { name: "Party", items: ["🎈", "🎂", "🎁", "🎉"] }
-          ]
-        },
-        {
-          name: "Medium Set 2",
-          groups: [
-            { name: "Tools", items: ["🔨", "🔧", "✂️", "🔪"] },
-            { name: "Music", items: ["🎸", "🎹", "🥁", "🎺"] },
-            { name: "Clothes", items: ["👕", "👖", "👗", "👞"] },
-            { name: "Faces", items: ["😀", "😂", "😍", "😎"] }
-          ]
-        }
-      ],
-      hard: [
-        {
-          name: "Hard Set 1",
-          groups: [
-            { name: "Time", items: ["⏰", "⏱️", "⌛", "🕐"] },
-            { name: "Tech", items: ["💻", "📱", "⌨️", "🖱️"] },
-            { name: "Books", items: ["📖", "📚", "📝", "✏️"] },
-            { name: "Travel", items: ["🗺️", "🧳", "✈️", "🏖️"] }
-          ]
-        },
-        {
-          name: "Hard Set 2",
-          groups: [
-            { name: "Winter", items: ["⛄", "🎿", "🧣", "🧤"] },
-            { name: "Night", items: ["🌙", "⭐", "🦉", "🌃"] },
-            { name: "Garden", items: ["🌻", "🌷", "🌹", "🌺"] },
-            { name: "Kitchen", items: ["🍳", "🥘", "🔪", "🥄"] }
-          ]
-        }
-      ]
-    };
+    // PUZZLE CATALOGUE - add in additional puzzles here
+    
+const puzzleCatalogue = {
+  easy: [
+    // Week 1
+    { name: "Set 1", groups: [
+      { name: "Fruits", items: ["🍎", "🍌", "🍇", "🍊"] },
+      { name: "Animals", items: ["🐶", "🐱", "🐷", "🐮"] },
+      { name: "Vehicles", items: ["🚗", "🚌", "🚲", "✈️"] },
+      { name: "Weather", items: ["☀️", "🌧️", "🌩️", "❄️"] }
+    ]},
+    { name: "Set 2", groups: [
+      { name: "Colors", items: ["❤️", "💙", "💚", "💛"] },
+      { name: "Sports", items: ["⚽", "🏀", "⚾", "🏈"] },
+      { name: "Food", items: ["🍕", "🍔", "🌮", "🍜"] },
+      { name: "Sea Life", items: ["🐠", "🐙", "🦈", "🐬"] }
+    ]},
+    { name: "Set 3", groups: [
+      { name: "Faces", items: ["😀", "😂", "😍", "😎"] },
+      { name: "Birds", items: ["🦅", "🦆", "🦉", "🐧"] },
+      { name: "Flowers", items: ["🌹", "🌻", "🌷", "🌺"] },
+      { name: "Shapes", items: ["⭐", "❤️", "⚫", "🔵"] }
+    ]},
+    { name: "Set 4", groups: [
+      { name: "Farm", items: ["🐔", "🐴", "🐏", "🐄"] },
+      { name: "Snacks", items: ["🍿", "🍪", "🍩", "🧁"] },
+      { name: "Bugs", items: ["🐝", "🐞", "🦋", "🐛"] },
+      { name: "Desserts", items: ["🍰", "🍦", "🍫", "🍮"] }
+    ]},
+    
+    // Week 2
+    { name: "Set 5", groups: [
+      { name: "Drinks", items: ["🥤", "🧃", "🥛", "☕"] },
+      { name: "Jungle", items: ["🦁", "🐘", "🦒", "🐒"] },
+      { name: "Toys", items: ["🎮", "🧸", "🎲", "🪀"] },
+      { name: "School", items: ["📚", "✏️", "📏", "🖍️"] }
+    ]},
+    { name: "Set 6", groups: [
+      { name: "Pets", items: ["🐕", "🐈", "🐇", "🐹"] },
+      { name: "Fruit", items: ["🍓", "🍒", "🍑", "🍉"] },
+      { name: "Tools", items: ["🔨", "🔧", "✂️", "📌"] },
+      { name: "Music", items: ["🎵", "🎶", "🎸", "🎹"] }
+    ]},
+    { name: "Set 7", groups: [
+      { name: "Time", items: ["⏰", "⏱️", "⌛", "⌚"] },
+      { name: "Plants", items: ["🌲", "🌳", "🌴", "🌵"] },
+      { name: "Fast", items: ["🚀", "⚡", "💨", "🏃"] },
+      { name: "Night", items: ["🌙", "⭐", "🌟", "✨"] }
+    ]},
+    { name: "Set 8", groups: [
+      { name: "Baby", items: ["👶", "🍼", "👣", "🧷"] },
+      { name: "Cold", items: ["❄️", "🧊", "⛄", "🥶"] },
+      { name: "Hot", items: ["🔥", "☀️", "🌶️", "🥵"] },
+      { name: "Water", items: ["💧", "🌊", "🏊", "🚿"] }
+    ]},
+    
+    // Week 3
+    { name: "Set 9", groups: [
+      { name: "Space", items: ["🌙", "⭐", "🪐", "🛸"] },
+      { name: "Clothes", items: ["👕", "👖", "👗", "👞"] },
+      { name: "Hands", items: ["👋", "👏", "👍", "✋"] },
+      { name: "Party", items: ["🎈", "🎂", "🎁", "🎉"] }
+    ]},
+    { name: "Set 10", groups: [
+      { name: "Beach", items: ["🏖️", "🏄", "🌊", "🐚"] },
+      { name: "Home", items: ["🏠", "🛏️", "🚪", "🪟"] },
+      { name: "Kitchen", items: ["🍽️", "🥄", "🍴", "🔪"] },
+      { name: "Round", items: ["⚽", "🏀", "🎾", "⚾"] }
+    ]},
+    { name: "Set 11", groups: [
+      { name: "Red", items: ["🍎", "🍓", "🌹", "❤️"] },
+      { name: "Yellow", items: ["🍋", "🌻", "⭐", "🍌"] },
+      { name: "Green", items: ["🍀", "🌲", "🐸", "🥒"] },
+      { name: "Blue", items: ["🌊", "💙", "🦋", "🐳"] }
+    ]},
+    { name: "Set 12", groups: [
+      { name: "Wild", items: ["🦁", "🐯", "🐻", "🦊"] },
+      { name: "Small", items: ["🐜", "🐝", "🐛", "🐞"] },
+      { name: "Flying", items: ["🦅", "🦆", "🐦", "🦜"] },
+      { name: "Pets", items: ["🐕", "🐈", "🐇", "🐹"] }
+    ]},
+    
+    // Week 4
+    { name: "Set 13", groups: [
+      { name: "Sweet", items: ["🍰", "🍪", "🍭", "🧁"] },
+      { name: "Pizza", items: ["🍕", "🧀", "🍅", "🫒"] },
+      { name: "Breakfast", items: ["🥞", "🥓", "🍳", "🥐"] },
+      { name: "Fruits", items: ["🍎", "🍊", "🍇", "🍓"] }
+    ]},
+    { name: "Set 14", groups: [
+      { name: "Happy", items: ["😀", "😄", "😊", "🥳"] },
+      { name: "Love", items: ["😍", "🥰", "😘", "💕"] },
+      { name: "Cool", items: ["😎", "🤩", "😏", "🤠"] },
+      { name: "Silly", items: ["🤪", "😜", "😝", "🤓"] }
+    ]},
+    { name: "Set 15", groups: [
+      { name: "Transport", items: ["🚂", "🚁", "⛵", "🚕"] },
+      { name: "Buildings", items: ["🏠", "🏫", "🏥", "🏪"] },
+      { name: "Nature", items: ["🌳", "🌺", "🍄", "🌈"] },
+      { name: "Sky", items: ["☁️", "⛅", "🌤️", "🌥️"] }
+    ]}
+  ],
+  
+  medium: [
+    // Week 1
+    { name: "Set 1", groups: [
+      { name: "Buildings", items: ["🏠", "🏫", "🏥", "🏪"] },
+      { name: "Nature", items: ["🌲", "🌻", "🍄", "🌵"] },
+      { name: "Space", items: ["🌙", "⭐", "🌎", "🚀"] },
+      { name: "Party", items: ["🎈", "🎂", "🎁", "🎉"] }
+    ]},
+    { name: "Set 2", groups: [
+      { name: "Tools", items: ["🔨", "🔧", "✂️", "🔪"] },
+      { name: "Music", items: ["🎸", "🎹", "🥁", "🎺"] },
+      { name: "Clothes", items: ["👕", "👖", "👗", "👞"] },
+      { name: "Faces", items: ["😀", "😂", "😍", "😎"] }
+    ]},
+    { name: "Set 3", groups: [
+      { name: "Office", items: ["💼", "📎", "📌", "🖇️"] },
+      { name: "Tech", items: ["💻", "📱", "⌨️", "🖱️"] },
+      { name: "Art", items: ["🎨", "🖌️", "✏️", "🖍️"] },
+      { name: "Books", items: ["📖", "📚", "📝", "📄"] }
+    ]},
+    { name: "Set 4", groups: [
+      { name: "Sports", items: ["🏃", "🏊", "🚴", "⛷️"] },
+      { name: "Signs", items: ["⚠️", "🚫", "✅", "❌"] },
+      { name: "Weather", items: ["🌈", "⚡", "🌪️", "🌫️"] },
+      { name: "Seasons", items: ["🌸", "☀️", "🍂", "❄️"] }
+    ]},
+    
+    // Week 2
+    { name: "Set 5", groups: [
+      { name: "Fast", items: ["🚀", "⚡", "🏎️", "💨"] },
+      { name: "Slow", items: ["🐌", "🦥", "🐢", "⏳"] },
+      { name: "Big", items: ["🐘", "🦕", "🏔️", "🌍"] },
+      { name: "Small", items: ["🐜", "🦠", "📌", "💎"] }
+    ]},
+    { name: "Set 6", groups: [
+      { name: "Light", items: ["💡", "🔦", "🕯️", "🔥"] },
+      { name: "Sound", items: ["🔊", "📢", "🔔", "📣"] },
+      { name: "Time", items: ["⏰", "⏱️", "⌛", "⌚"] },
+      { name: "Money", items: ["💰", "💵", "💳", "🪙"] }
+    ]},
+    { name: "Set 7", groups: [
+      { name: "Medical", items: ["💊", "💉", "🩹", "🌡️"] },
+      { name: "Garden", items: ["🌻", "🌷", "🌹", "🌺"] },
+      { name: "Kitchen", items: ["🍳", "🥘", "🔪", "🥄"] },
+      { name: "Bathroom", items: ["🚿", "🧼", "🪥", "🧴"] }
+    ]},
+    { name: "Set 8", groups: [
+      { name: "Communication", items: ["📞", "📧", "💬", "📬"] },
+      { name: "Travel", items: ["🗺️", "🧳", "✈️", "🏖️"] },
+      { name: "Safety", items: ["🛡️", "🔒", "🚨", "⚠️"] },
+      { name: "Celebration", items: ["🎊", "🎆", "🥳", "🍾"] }
+    ]},
+    
+    // Week 3
+    { name: "Set 9", groups: [
+      { name: "Recycling", items: ["♻️", "🗑️", "📦", "🧴"] },
+      { name: "Energy", items: ["🔋", "⚡", "☀️", "💨"] },
+      { name: "Water", items: ["💧", "🌊", "🚿", "⛲"] },
+      { name: "Earth", items: ["🌍", "🌱", "🌳", "🏔️"] }
+    ]},
+    { name: "Set 10", groups: [
+      { name: "Feelings", items: ["❤️", "💔", "😢", "😊"] },
+      { name: "Body", items: ["👁️", "👂", "👃", "👄"] },
+      { name: "Health", items: ["💪", "🧠", "❤️‍🩹", "🏃"] },
+      { name: "Food Groups", items: ["🥦", "🍎", "🥩", "🥛"] }
+    ]},
+    { name: "Set 11", groups: [
+      { name: "Morning", items: ["🌅", "☕", "🥐", "📰"] },
+      { name: "Afternoon", items: ["☀️", "🍽️", "📚", "💼"] },
+      { name: "Evening", items: ["🌆", "🍕", "📺", "🎮"] },
+      { name: "Night", items: ["🌙", "😴", "🛏️", "💤"] }
+    ]},
+    { name: "Set 12", groups: [
+      { name: "Winter", items: ["⛄", "🎿", "🧣", "🧤"] },
+      { name: "Spring", items: ["🌸", "🐣", "🌱", "🌼"] },
+      { name: "Summer", items: ["🏖️", "🍉", "☀️", "🏊"] },
+      { name: "Fall", items: ["🍂", "🎃", "🍁", "🌰"] }
+    ]},
+    
+    // Week 4
+    { name: "Set 13", groups: [
+      { name: "Directions", items: ["⬆️", "⬇️", "⬅️", "➡️"] },
+      { name: "Shapes", items: ["⭐", "❤️", "⚫", "🔺"] },
+      { name: "Numbers", items: ["1️⃣", "2️⃣", "3️⃣", "4️⃣"] },
+      { name: "Letters", items: ["🔤", "🔡", "🔠", "📝"] }
+    ]},
+    { name: "Set 14", groups: [
+      { name: "Cleaning", items: ["🧹", "🧽", "🧼", "🧺"] },
+      { name: "Cooking", items: ["🍳", "🥘", "🔪", "🧂"] },
+      { name: "Sewing", items: ["🧵", "🪡", "✂️", "🧶"] },
+      { name: "Fixing", items: ["🔨", "🔧", "🪛", "⚙️"] }
+    ]},
+    { name: "Set 15", groups: [
+      { name: "Circus", items: ["🎪", "🤹", "🎭", "🎠"] },
+      { name: "Magic", items: ["🎩", "✨", "🪄", "🔮"] },
+      { name: "Pirate", items: ["🏴‍☠️", "💎", "🗺️", "⚓"] },
+      { name: "Castle", items: ["🏰", "👑", "🗡️", "🛡️"] }
+    ]}
+  ],
+  
+  hard: [
+    // Week 1
+    { name: "Set 1", groups: [
+      { name: "Time", items: ["⏰", "⏱️", "⌛", "🕐"] },
+      { name: "Tech", items: ["💻", "📱", "⌨️", "🖱️"] },
+      { name: "Books", items: ["📖", "📚", "📝", "✏️"] },
+      { name: "Travel", items: ["🗺️", "🧳", "✈️", "🏖️"] }
+    ]},
+    { name: "Set 2", groups: [
+      { name: "Winter", items: ["⛄", "🎿", "🧣", "🧤"] },
+      { name: "Night", items: ["🌙", "⭐", "🦉", "🌃"] },
+      { name: "Garden", items: ["🌻", "🌷", "🌹", "🌺"] },
+      { name: "Kitchen", items: ["🍳", "🥘", "🔪", "🥄"] }
+    ]},
+    { name: "Set 3", groups: [
+      { name: "Science", items: ["🔬", "🧪", "🧬", "⚗️"] },
+      { name: "Math", items: ["➕", "➖", "✖️", "➗"] },
+      { name: "Geography", items: ["🗺️", "🧭", "🌍", "🏔️"] },
+      { name: "History", items: ["📜", "🏛️", "👑", "⚔️"] }
+    ]},
+    { name: "Set 4", groups: [
+      { name: "Emotions", items: ["❤️", "💔", "😊", "😢"] },
+      { name: "Thoughts", items: ["💭", "💡", "🧠", "🤔"] },
+      { name: "Communication", items: ["💬", "📞", "✉️", "📢"] },
+      { name: "Relationships", items: ["👨‍👩‍👧", "💑", "👫", "🤝"] }
+    ]},
+    
+    // Week 2
+    { name: "Set 5", groups: [
+      { name: "Beginning", items: ["🌱", "🐣", "🌅", "👶"] },
+      { name: "Middle", items: ["🌳", "🐔", "☀️", "🧑"] },
+      { name: "End", items: ["🍂", "🥚", "🌇", "👴"] },
+      { name: "Cycle", items: ["♻️", "🔄", "⏰", "🌙"] }
+    ]},
+    { name: "Set 6", groups: [
+      { name: "Creation", items: ["🎨", "✏️", "🎭", "🎵"] },
+      { name: "Destruction", items: ["💥", "🔥", "⚡", "🌪️"] },
+      { name: "Growth", items: ["📈", "🌱", "💪", "🧠"] },
+      { name: "Decay", items: ["📉", "🍂", "⏳", "🥀"] }
+    ]},
+    { name: "Set 7", groups: [
+      { name: "Vision", items: ["👁️", "👓", "🔍", "💡"] },
+      { name: "Hearing", items: ["👂", "🔊", "🎵", "📢"] },
+      { name: "Touch", items: ["✋", "🤝", "💆", "🧤"] },
+      { name: "Taste", items: ["👅", "🍴", "🍰", "🌶️"] }
+    ]},
+    { name: "Set 8", groups: [
+      { name: "Past", items: ["📜", "⏪", "🦕", "🏛️"] },
+      { name: "Present", items: ["📱", "⏸️", "🏙️", "📰"] },
+      { name: "Future", items: ["🚀", "⏩", "🤖", "🔮"] },
+      { name: "Timeless", items: ["♾️", "🌌", "⏳", "💎"] }
+    ]},
+    
+    // Week 3
+    { name: "Set 9", groups: [
+      { name: "Leaders", items: ["👑", "📊", "🎤", "🏆"] },
+      { name: "Helpers", items: ["🤝", "💪", "🛠️", "🆘"] },
+      { name: "Learners", items: ["📚", "🎓", "🧠", "📝"] },
+      { name: "Teachers", items: ["👨‍🏫", "📖", "💡", "🎯"] }
+    ]},
+    { name: "Set 10", groups: [
+      { name: "Problem", items: ["⚠️", "❌", "🚫", "⛔"] },
+      { name: "Solution", items: ["✅", "💡", "🔧", "🎯"] },
+      { name: "Question", items: ["❓", "🤔", "🔍", "📋"] },
+      { name: "Answer", items: ["💬", "📖", "🎓", "✔️"] }
+    ]},
+    { name: "Set 11", groups: [
+      { name: "Air", items: ["💨", "🎈", "🪁", "🌬️"] },
+      { name: "Earth", items: ["🌍", "🏔️", "🌱", "🪨"] },
+      { name: "Fire", items: ["🔥", "☀️", "⚡", "🌋"] },
+      { name: "Water", items: ["💧", "🌊", "❄️", "☔"] }
+    ]},
+    { name: "Set 12", groups: [
+      { name: "Cause", items: ["➡️", "💥", "🎯", "🔑"] },
+      { name: "Effect", items: ["⬅️", "💫", "🎁", "🏆"] },
+      { name: "Action", items: ["🏃", "🔨", "✍️", "🎬"] },
+      { name: "Result", items: ["🏁", "✔️", "🎯", "💯"] }
+    ]},
+    
+    // Week 4
+    { name: "Set 13", groups: [
+      { name: "Individual", items: ["👤", "🧍", "🙋", "💭"] },
+      { name: "Pair", items: ["👥", "💑", "🤝", "👫"] },
+      { name: "Group", items: ["👨‍👩‍👧‍👦", "🏘️", "🏫", "🏢"] },
+      { name: "Community", items: ["🌍", "🏙️", "🤲", "🌐"] }
+    ]},
+    { name: "Set 14", groups: [
+      { name: "Input", items: ["⬇️", "📥", "🎤", "⌨️"] },
+      { name: "Process", items: ["⚙️", "🔄", "💭", "🧮"] },
+      { name: "Output", items: ["⬆️", "📤", "🔊", "🖨️"] },
+      { name: "Feedback", items: ["🔁", "💬", "📊", "✅"] }
+    ]},
+    { name: "Set 15", groups: [
+      { name: "Observation", items: ["👀", "🔍", "📹", "📊"] },
+      { name: "Question", items: ["❓", "🤔", "💭", "📋"] },
+      { name: "Hypothesis", items: ["💡", "📝", "🎯", "🧪"] },
+      { name: "Experiment", items: ["🔬", "⚗️", "📈", "✅"] }
+    ]}
+  ]
+};
+    // DAILY PUZZLE SELECTION
+    function getDayOfYear() {
+      const now = new Date();
+      const start = new Date(now.getFullYear(), 0, 0);
+      const diff = now - start;
+      const oneDay = 1000 * 60 * 60 * 24;
+      return Math.floor(diff / oneDay);
+    }
 
-    // Game state
+    function getTodaysPuzzles(difficulty) {
+      const day = getDayOfYear();
+      const puzzles = puzzleCatalogue[difficulty];
+      const total = puzzles.length;
+      const index1 = (day * 2) % total;
+      const index2 = (day * 2 + 1) % total;
+      return [puzzles[index1], puzzles[index2]];
+    }
+
+    // SCORE TRACKING
+    function getTodayKey() {
+      const today = new Date();
+      return `${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}`;
+    }
+
+    function loadDailyProgress() {
+      const key = getTodayKey();
+      const data = localStorage.getItem(`daily_${key}`);
+      return data ? JSON.parse(data) : {
+        easy: { completed: [] },
+        medium: { completed: [] },
+        hard: { completed: [] }
+      };
+    }
+
+    function saveDailyProgress(progress) {
+      const key = getTodayKey();
+      localStorage.setItem(`daily_${key}`, JSON.stringify(progress));
+    }
+
+    function calculateScore(progress) {
+      let score = 0;
+      ['easy', 'medium', 'hard'].forEach(diff => {
+        score += progress[diff].completed.length * 100;
+      });
+      return score;
+    }
+
+    // GAME STATE
     let currentDifficulty = 'easy';
     let currentPuzzles = [];
     let currentPuzzleIndex = 0;
@@ -559,13 +784,12 @@
     let strikes = 0;
     let soundEnabled = true;
     const maxStrikes = 4;
+    let dailyProgress = loadDailyProgress();
 
-    // Confetti
+    // CONFETTI
     const canvas = document.getElementById('confettiCanvas');
     const ctx = canvas.getContext('2d');
     let confettiParticles = [];
-    let animationId = null;
-
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
@@ -577,73 +801,49 @@
         this.speedY = Math.random() * 3 + 2;
         this.speedX = Math.random() * 2 - 1;
         this.color = ['#FFD93D', '#FF6B9D', '#C8B6FF', '#00FA9A', '#00CED1'][Math.floor(Math.random() * 5)];
-        this.rotation = Math.random() * 360;
-        this.rotationSpeed = Math.random() * 10 - 5;
       }
-      
       update() {
         this.y += this.speedY;
         this.x += this.speedX;
-        this.rotation += this.rotationSpeed;
-        
-        if (this.y > canvas.height) return false;
-        return true;
+        return this.y <= canvas.height;
       }
-      
       draw() {
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.rotate(this.rotation * Math.PI / 180);
         ctx.fillStyle = this.color;
-        ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
-        ctx.restore();
+        ctx.fillRect(this.x, this.y, this.size, this.size);
       }
     }
 
     function startConfetti() {
-      for (let i = 0; i < 200; i++) {
-        confettiParticles.push(new ConfettiPiece());
-      }
+      for (let i = 0; i < 200; i++) confettiParticles.push(new ConfettiPiece());
       animateConfetti();
     }
 
     function animateConfetti() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      confettiParticles = confettiParticles.filter(particle => {
-        particle.update();
-        particle.draw();
-        return particle.y <= canvas.height;
+      confettiParticles = confettiParticles.filter(p => {
+        p.update();
+        p.draw();
+        return p.y <= canvas.height;
       });
-      
-      if (confettiParticles.length > 0) {
-        animationId = requestAnimationFrame(animateConfetti);
-      }
+      if (confettiParticles.length > 0) requestAnimationFrame(animateConfetti);
     }
 
-    // Sound generation
+    // SOUNDS
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     
-    function playTone(frequency, duration, volume = 0.3) {
+    function playTone(freq, dur, vol = 0.3) {
       if (!soundEnabled) return;
       try {
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        oscillator.frequency.value = frequency;
-        oscillator.type = 'sine';
-        
-        gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
-        
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + duration);
-      } catch (e) {
-        console.error('Sound error:', e);
-      }
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(vol, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + dur);
+        osc.start(audioContext.currentTime);
+        osc.stop(audioContext.currentTime + dur);
+      } catch (e) {}
     }
     
     const sounds = {
@@ -658,9 +858,7 @@
         setTimeout(() => playTone(150, 0.2), 100);
       },
       clap: () => {
-        console.log('🎉 CLAPPING SOUND STARTING!');
-        // More realistic clapping sequence with multiple claps
-        const clapPattern = [
+        const claps = [
           { time: 0, freq: 200, vol: 0.5 },
           { time: 100, freq: 220, vol: 0.5 },
           { time: 200, freq: 210, vol: 0.5 },
@@ -669,22 +867,13 @@
           { time: 600, freq: 220, vol: 0.6 },
           { time: 800, freq: 210, vol: 0.7 },
           { time: 900, freq: 230, vol: 0.7 },
-          { time: 1000, freq: 200, vol: 0.7 },
-          { time: 1200, freq: 220, vol: 0.6 },
-          { time: 1300, freq: 240, vol: 0.6 },
-          { time: 1400, freq: 210, vol: 0.5 }
+          { time: 1000, freq: 200, vol: 0.7 }
         ];
-        
-        clapPattern.forEach((clap, index) => {
-          setTimeout(() => {
-            console.log(`Clap ${index + 1}`);
-            playTone(clap.freq, 0.08, clap.vol);
-          }, clap.time);
-        });
+        claps.forEach(c => setTimeout(() => playTone(c.freq, 0.08, c.vol), c.time));
       }
     };
 
-    // Utility functions
+    // UTILITY
     function shuffle(arr) {
       const a = [...arr];
       for (let i = a.length - 1; i > 0; i--) {
@@ -709,46 +898,41 @@
       return selected.some(s => s.emoji === item.emoji);
     }
 
-    // Screen management
+    // SCREEN MANAGEMENT
     function showScreen(screenId) {
-      console.log('Showing screen:', screenId);
-      
-      // Hide ALL screens
       document.getElementById('homeScreen').classList.remove('active');
       document.getElementById('gameScreen').classList.remove('active');
-      
-      // Show only the target screen
       document.getElementById(screenId).classList.add('active');
+    }
+
+    function updateHomeScreen() {
+      const today = new Date();
+      document.getElementById('todayDate').textContent = today.toDateString();
+      const score = calculateScore(dailyProgress);
+      document.getElementById('todayScore').textContent = `${score}/600`;
       
-      console.log('Home screen classes:', document.getElementById('homeScreen').className);
-      console.log('Game screen classes:', document.getElementById('gameScreen').className);
+      ['easy', 'medium', 'hard'].forEach(diff => {
+        const completed = dailyProgress[diff].completed.length;
+        document.getElementById(`${diff}Status`).textContent = `${completed}/2 done`;
+      });
     }
 
     function startGame(difficulty) {
-      console.log('Starting game with difficulty:', difficulty);
       currentDifficulty = difficulty;
-      currentPuzzles = puzzlesByDifficulty[difficulty];
-      console.log('Current puzzles:', currentPuzzles);
+      currentPuzzles = getTodaysPuzzles(difficulty);
       currentPuzzleIndex = 0;
       showScreen('gameScreen');
-      console.log('Screen switched to gameScreen');
-      // Use setTimeout to ensure screen is rendered before initializing game
-      setTimeout(() => {
-        console.log('Calling restart...');
-        restart();
-      }, 50);
+      setTimeout(() => restart(), 50);
     }
 
     function goHome() {
       showScreen('homeScreen');
+      updateHomeScreen();
       confettiParticles = [];
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-      }
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    // Render functions
+    // RENDER
     function render() {
       renderPuzzleName();
       renderStrikes();
@@ -758,7 +942,8 @@
     }
 
     function renderPuzzleName() {
-      document.getElementById('puzzleName').textContent = currentPuzzles[currentPuzzleIndex].name;
+      document.getElementById('puzzleName').textContent = 
+        `${currentDifficulty.toUpperCase()} ${currentPuzzles[currentPuzzleIndex].name}`;
       document.getElementById('prevBtn').disabled = currentPuzzleIndex === 0;
       document.getElementById('nextBtn').disabled = currentPuzzleIndex === currentPuzzles.length - 1;
     }
@@ -771,35 +956,29 @@
         document.getElementById('strikes').style.display = 'none';
       } else {
         document.getElementById('strikes').style.display = 'block';
-        const hearts = '❤️'.repeat(maxStrikes - strikes);
-        const broken = '🖤'.repeat(strikes);
-        document.getElementById('strikes').textContent = `Tries: ${hearts}${broken}`;
+        document.getElementById('strikes').textContent = 
+          `${'❤️'.repeat(maxStrikes - strikes)}${'🖤'.repeat(strikes)}`;
       }
     }
 
     function renderFoundGroups() {
       const container = document.getElementById('foundGroups');
       container.innerHTML = '';
-      
       found.forEach(group => {
         const row = document.createElement('div');
         row.className = 'group-row';
-        
         const label = document.createElement('div');
         label.className = 'group-label';
         label.textContent = group.name;
         row.appendChild(label);
-        
         const itemsDiv = document.createElement('div');
         itemsDiv.className = 'group-items';
-        
         group.items.forEach(item => {
           const card = document.createElement('div');
           card.className = 'card found';
           card.textContent = item.emoji;
           itemsDiv.appendChild(card);
         });
-        
         row.appendChild(itemsDiv);
         container.appendChild(row);
       });
@@ -808,8 +987,7 @@
     function renderGrid() {
       const grid = document.getElementById('grid');
       grid.innerHTML = '';
-      
-      items.forEach((item, idx) => {
+      items.forEach((item) => {
         if (!isFound(item)) {
           const card = document.createElement('div');
           card.className = 'card';
@@ -824,11 +1002,10 @@
     function updateButtons() {
       const gameWon = found.length === currentPuzzles[currentPuzzleIndex].groups.length;
       const gameLost = strikes >= maxStrikes;
-      
       document.getElementById('checkBtn').textContent = `Check (${selected.length}/4)`;
       document.getElementById('checkBtn').disabled = selected.length !== 4 || gameWon || gameLost;
       document.getElementById('shuffleBtn').disabled = gameWon || gameLost;
-      document.getElementById('restartBtn').textContent = (gameWon || gameLost) ? 'Play Again' : 'Restart';
+      document.getElementById('restartBtn').textContent = (gameWon || gameLost) ? 'Again' : 'Restart';
     }
 
     function showMessage(text, type = '') {
@@ -838,58 +1015,51 @@
       msg.style.display = text ? 'block' : 'none';
     }
 
-    function showStars() {
-      const stars = document.createElement('div');
-      stars.className = 'stars';
-      stars.textContent = '🌟🌟🌟';
-      document.body.appendChild(stars);
-      setTimeout(() => stars.remove(), 1000);
-    }
-
-    // Game logic
+    // GAME LOGIC
     function clickCard(item) {
       const gameWon = found.length === currentPuzzles[currentPuzzleIndex].groups.length;
       const gameLost = strikes >= maxStrikes;
-      
       if (isFound(item) || gameLost || gameWon) return;
       
       sounds.click();
-      
       if (isSelected(item)) {
         selected = selected.filter(s => s.emoji !== item.emoji);
       } else if (selected.length < 4) {
         selected.push(item);
         showMessage('');
       }
-      
       render();
     }
 
     function checkGroup() {
       if (selected.length !== 4) return;
       
-      const allSameGroup = selected.every(it => it.group === selected[0].group);
+      const allSame = selected.every(it => it.group === selected[0].group);
       
-      if (allSameGroup) {
+      if (allSame) {
         sounds.correct();
         const groupName = selected[0].group;
         found.push({ name: groupName, items: selected });
-        showMessage(`✅ Great job! You found ${groupName}!`);
-        showStars();
+        showMessage(`✅ ${groupName}!`);
         
         if (found.length === currentPuzzles[currentPuzzleIndex].groups.length) {
           sounds.clap();
-          showMessage('🎉 You found all groups! Amazing! 🎉', 'win');
+          showMessage('🎉 Complete!', 'win');
           startConfetti();
+          
+          const puzzleId = `${currentDifficulty}-${currentPuzzleIndex}`;
+          if (!dailyProgress[currentDifficulty].completed.includes(puzzleId)) {
+            dailyProgress[currentDifficulty].completed.push(puzzleId);
+            saveDailyProgress(dailyProgress);
+          }
         }
       } else {
         sounds.wrong();
         strikes++;
-        
         if (strikes >= maxStrikes) {
-          showMessage('❌ Game Over! Try again!', 'lose');
+          showMessage('❌ Game Over!', 'lose');
         } else {
-          showMessage(`❌ Not quite right. ${maxStrikes - strikes} tries left!`);
+          showMessage(`❌ ${maxStrikes - strikes} left`);
         }
       }
       
@@ -910,9 +1080,6 @@
       strikes = 0;
       showMessage('');
       confettiParticles = [];
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-      }
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       render();
     }
@@ -925,12 +1092,7 @@
       }
     }
 
-    function toggleSound() {
-      soundEnabled = !soundEnabled;
-      document.getElementById('soundToggle').textContent = soundEnabled ? '🔊' : '🔇';
-    }
-
-    // Event listeners
+    // EVENT LISTENERS
     window.addEventListener('DOMContentLoaded', function() {
       document.getElementById('easyBtn').addEventListener('click', () => startGame('easy'));
       document.getElementById('mediumBtn').addEventListener('click', () => startGame('medium'));
@@ -940,26 +1102,13 @@
       document.getElementById('restartBtn').addEventListener('click', restart);
       document.getElementById('prevBtn').addEventListener('click', () => changePuzzle(-1));
       document.getElementById('nextBtn').addEventListener('click', () => changePuzzle(1));
-      document.getElementById('soundToggle').addEventListener('click', toggleSound);
+      document.getElementById('soundToggle').addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        document.getElementById('soundToggle').textContent = soundEnabled ? '🔊' : '🔇';
+      });
       document.getElementById('homeBtn').addEventListener('click', goHome);
       
-      console.log('Game initialized!');
-    });
-
-    // Keyboard support
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && selected.length === 4) {
-        checkGroup();
-      } else if (e.key === 'Escape') {
-        selected = [];
-        render();
-      }
-    });
-
-    // Handle window resize for confetti
-    window.addEventListener('resize', () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      updateHomeScreen();
     });
   </script>
 </body>
