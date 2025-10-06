@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Kids Connections Game</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+    }
+    
+    body {
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif;
+      background: linear-gradient(135deg, #FFD93D 0%, #FF6B9D 50%, #C8B6FF 100%);
+      background-attachment: fixed;
+    }
+    
+    .screen {
+      display: none;
+      width: 100%;
+      height: 100vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .screen.active { 
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* HOME SCREEN */
+    .home-screen {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .home-screen.active {
+      display: flex;
+    }
+    
+    .home-title {
+      color: white;
+      font-size: 52px;
+      font-weight: 900;
+      text-shadow: 4px 4px 0 #FF1493, 6px 6px 0 #00CED1;
+      letter-spacing: 2px;
+      margin-bottom: 40px;
+      animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    .difficulty-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 100%;
+      max-width: 400px;
+    }
+    
+    .difficulty-btn {
+      padding: 24px;
+      font-size: 28px;
+      font-weight: 900;
+      border-radius: 20px;
+      border: 5px solid white;
+      cursor: pointer;
+      color: white;
+      transition: all 0.2s;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+    }
+    
+    .difficulty-btn.easy {
+      background: linear-gradient(135deg, #00FA9A 0%, #00CED1 100%);
+    }
+    
+    .difficulty-btn.medium {
+      background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
+    }
+    
+    .difficulty-btn.hard {
+      background: linear-gradient(135deg, #FF6B9D 0%, #FF1493 100%);
+    }
+    
+    .difficulty-btn:hover {
+      transform: scale(1.05) rotate(2deg);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+    
+    /* GAME SCREEN */
+    .container {
+      padding: 8px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      margin-bottom: 10px;
+      flex-shrink: 0;
+    }
+    
+    h1 {
+      color: white;
+      font-size: 28px;
+      font-weight: 900;
+      text-shadow: 3px 3px 0 #FF1493, 5px 5px 0 #00CED1;
+      letter-spacing: 2px;
+    }
+    
+    .home-btn {
+      position: absolute;
+      left: 0;
+      background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
+      border: 4px solid white;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .home-btn:hover { transform: scale(1.1) rotate(-10deg); }
+    
+    .sound-toggle {
+      position: absolute;
+      right: 0;
+      background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
+      border: 4px solid white;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .sound-toggle:hover { transform: scale(1.1) rotate(10deg); }
+    
+    .puzzle-selector {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #FF6B9D 0%, #FFA07A 100%);
+      padding: 10px;
+      border-radius: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      border: 3px solid white;
+      flex-shrink: 0;
+    }
+    
+    .puzzle-name {
+      font-size: 16px;
+      font-weight: 900;
+      color: white;
+      min-width: 100px;
+      text-align: center;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+    }
+    
+    .nav-btn {
+      padding: 6px 12px;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 10px;
+      border: 3px solid white;
+      background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+    }
+    
+    .nav-btn:hover:not(:disabled) {
+      background: linear-gradient(135deg, #FFA500 0%, #FF6347 100%);
+      transform: scale(1.05);
+    }
+    
+    .nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+    
+    .strikes {
+      text-align: center;
+      font-size: 20px;
+      margin-bottom: 6px;
+      background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
+      padding: 6px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      border: 3px solid white;
+      font-weight: 900;
+      color: white;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+      flex-shrink: 0;
+    }
+    
+    .message {
+      text-align: center;
+      margin-bottom: 8px;
+      padding: 8px;
+      background: white;
+      border-radius: 12px;
+      font-weight: 900;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      font-size: 16px;
+      border: 3px solid #FF6B9D;
+      flex-shrink: 0;
+    }
+    
+    .message.win { 
+      color: #16a34a; 
+      font-size: 18px;
+      border-color: #16a34a;
+      animation: wiggle 0.5s ease;
+    }
+    .message.lose { 
+      color: #dc2626; 
+      font-size: 17px;
+      border-color: #dc2626;
+    }
+    
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-5deg); }
+      75% { transform: rotate(5deg); }
+    }
+    
+    .found-groups {
+      margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+      max-height: 20vh;
+      overflow-y: auto;
+    }
+    
+    .group-row {
+      background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
+      padding: 10px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      border: 3px solid white;
+      animation: slideDown 0.4s ease;
+    }
+    
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-20px) scale(0.9); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    
+    .group-label {
+      font-size: 14px;
+      font-weight: 900;
+      color: white;
+      text-align: center;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+    }
+    
+    .group-items {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-shrink: 0;
+      flex-grow: 1;
+      align-content: start;
+    }
+    
+    .card {
+      font-size: 40px;
+      padding: 16px;
+      text-align: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #FFFFFF 0%, #F0F8FF 100%);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid #FFD93D;
+    }
+    
+    .card:hover { 
+      transform: translateY(-3px) rotate(2deg);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+      border-color: #FF6B9D;
+    }
+    
+    .card.selected {
+      background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
+      border: 3px solid #FF1493;
+      transform: translateY(-3px) scale(1.08) rotate(-2deg);
+      box-shadow: 0 6px 16px rgba(255,20,147,0.5);
+    }
+    
+    .card.found {
+      background: linear-gradient(135deg, #00FA9A 0%, #00CED1 100%);
+      color: white;
+      font-size: 32px;
+      border: 3px solid white;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+    }
+    
+    .buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 8px;
+      flex-shrink: 0;
+    }
+    
+    .btn {
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 900;
+      border-radius: 12px;
+      border: 3px solid white;
+      cursor: pointer;
+      background: linear-gradient(135deg, #C8B6FF 0%, #9D84FF 100%);
+      color: white;
+      transition: all 0.2s;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+    }
+    
+    .btn:hover:not(:disabled) {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 5px 14px rgba(0,0,0,0.3);
+    }
+    
+    .btn.primary {
+      background: linear-gradient(135deg, #FF6B9D 0%, #FF1493 100%);
+      font-size: 15px;
+    }
+    
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    
+    .hint {
+      text-align: center;
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+      flex-shrink: 0;
+    }
+    
+    .stars {
+      position: fixed;
+      top: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 4rem;
+      pointer-events: none;
+      z-index: 1000;
+      animation: starPop 1s ease;
+    }
+    
+    @keyframes starPop {
+      0% { opacity: 0; transform: translateX(-50%) translateY(-30px) scale(0.5); }
+      50% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1.2); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-30px) scale(0.8); }
+    }
+    
+    /* CONFETTI */
+    .confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+    
+    @media (max-width: 768px) {
+      h1 { font-size: 28px; }
+      .grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+      .card { font-size: 40px; padding: 16px; }
+      .card.found { font-size: 36px; }
+    }
+    
+    @media (max-width: 480px) {
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .card { font-size: 36px; padding: 14px; }
+      .card.found { font-size: 32px; }
+      .home-title { font-size: 40px; }
+      .difficulty-btn { font-size: 24px; padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- HOME SCREEN -->
+  <div id="homeScreen" class="screen home-screen active">
+    <h1 class="home-title">Kids Connections</h1>
+    <div class="difficulty-buttons">
+      <button class="difficulty-btn easy" id="easyBtn">
+        😊 Easy
+      </button>
+      <button class="difficulty-btn medium" id="mediumBtn">
+        🤔 Medium
+      </button>
+      <button class="difficulty-btn hard" id="hardBtn">
+        🤯 Hard
+      </button>
+    </div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="gameScreen" class="screen">
+    <div class="container">
+      <div class="header">
+        <button class="home-btn" id="homeBtn">🏠</button>
+        <h1>Kids Connections</h1>
+        <button class="sound-toggle" id="soundToggle">🔊</button>
+      </div>
+      
+      <div class="puzzle-selector">
+        <button class="nav-btn" id="prevBtn">←</button>
+        <span class="puzzle-name" id="puzzleName"></span>
+        <button class="nav-btn" id="nextBtn">→</button>
+      </div>
+      
+      <div class="strikes" id="strikes"></div>
+      <div class="message" id="message"></div>
+      <div class="found-groups" id="foundGroups"></div>
+      <div class="grid" id="grid"></div>
+      
+      <div class="buttons">
+        <button class="btn primary" id="checkBtn">Check (0/4)</button>
+        <button class="btn" id="shuffleBtn">Shuffle</button>
+        <button class="btn" id="restartBtn">Restart</button>
+      </div>
+      
+      <div class="hint">💡 Tap cards again to deselect!</div>
+    </div>
+  </div>
+
+  <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+
+  <script>
+    // Puzzles data organized by difficulty
+    const puzzlesByDifficulty = {
+      easy: [
+        {
+          name: "Easy Set 1",
+          groups: [
+            { name: "Fruits", items: ["🍎", "🍌", "🍇", "🍊"] },
+            { name: "Animals", items: ["🐶", "🐱", "🐷", "🐮"] },
+            { name: "Vehicles", items: ["🚗", "🚌", "🚲", "✈️"] },
+            { name: "Weather", items: ["☀️", "🌧️", "🌩️", "❄️"] }
+          ]
+        },
+        {
+          name: "Easy Set 2",
+          groups: [
+            { name: "Colors", items: ["❤️", "💙", "💚", "💛"] },
+            { name: "Sports", items: ["⚽", "🏀", "⚾", "🏈"] },
+            { name: "Food", items: ["🍕", "🍔", "🌮", "🍜"] },
+            { name: "Sea Life", items: ["🐠", "🐙", "🦈", "🐬"] }
+          ]
+        }
+      ],
+      medium: [
+        {
+          name: "Medium Set 1",
+          groups: [
+            { name: "Buildings", items: ["🏠", "🏫", "🏥", "🏪"] },
+            { name: "Nature", items: ["🌲", "🌻", "🍄", "🌵"] },
+            { name: "Space", items: ["🌙", "⭐", "🌎", "🚀"] },
+            { name: "Party", items: ["🎈", "🎂", "🎁", "🎉"] }
+          ]
+        },
+        {
+          name: "Medium Set 2",
+          groups: [
+            { name: "Tools", items: ["🔨", "🔧", "✂️", "🔪"] },
+            { name: "Music", items: ["🎸", "🎹", "🥁", "🎺"] },
+            { name: "Clothes", items: ["👕", "👖", "👗", "👞"] },
+            { name: "Faces", items: ["😀", "😂", "😍", "😎"] }
+          ]
+        }
+      ],
+      hard: [
+        {
+          name: "Hard Set 1",
+          groups: [
+            { name: "Time", items: ["⏰", "⏱️", "⌛", "🕐"] },
+            { name: "Tech", items: ["💻", "📱", "⌨️", "🖱️"] },
+            { name: "Books", items: ["📖", "📚", "📝", "✏️"] },
+            { name: "Travel", items: ["🗺️", "🧳", "✈️", "🏖️"] }
+          ]
+        },
+        {
+          name: "Hard Set 2",
+          groups: [
+            { name: "Winter", items: ["⛄", "🎿", "🧣", "🧤"] },
+            { name: "Night", items: ["🌙", "⭐", "🦉", "🌃"] },
+            { name: "Garden", items: ["🌻", "🌷", "🌹", "🌺"] },
+            { name: "Kitchen", items: ["🍳", "🥘", "🔪", "🥄"] }
+          ]
+        }
+      ]
+    };
+
+    // Game state
+    let currentDifficulty = 'easy';
+    let currentPuzzles = [];
+    let currentPuzzleIndex = 0;
+    let items = [];
+    let selected = [];
+    let found = [];
+    let strikes = 0;
+    let soundEnabled = true;
+    const maxStrikes = 4;
+
+    // Confetti
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    let confettiParticles = [];
+    let animationId = null;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    class ConfettiPiece {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = -20;
+        this.size = Math.random() * 10 + 5;
+        this.speedY = Math.random() * 3 + 2;
+        this.speedX = Math.random() * 2 - 1;
+        this.color = ['#FFD93D', '#FF6B9D', '#C8B6FF', '#00FA9A', '#00CED1'][Math.floor(Math.random() * 5)];
+        this.rotation = Math.random() * 360;
+        this.rotationSpeed = Math.random() * 10 - 5;
+      }
+      
+      update() {
+        this.y += this.speedY;
+        this.x += this.speedX;
+        this.rotation += this.rotationSpeed;
+        
+        if (this.y > canvas.height) return false;
+        return true;
+      }
+      
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation * Math.PI / 180);
+        ctx.fillStyle = this.color;
+        ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+        ctx.restore();
+      }
+    }
+
+    function startConfetti() {
+      for (let i = 0; i < 200; i++) {
+        confettiParticles.push(new ConfettiPiece());
+      }
+      animateConfetti();
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      confettiParticles = confettiParticles.filter(particle => {
+        particle.update();
+        particle.draw();
+        return particle.y <= canvas.height;
+      });
+      
+      if (confettiParticles.length > 0) {
+        animationId = requestAnimationFrame(animateConfetti);
+      }
+    }
+
+    // Sound generation
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playTone(frequency, duration, volume = 0.3) {
+      if (!soundEnabled) return;
+      try {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = frequency;
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + duration);
+      } catch (e) {
+        console.error('Sound error:', e);
+      }
+    }
+    
+    const sounds = {
+      click: () => playTone(800, 0.1),
+      correct: () => {
+        playTone(523, 0.15);
+        setTimeout(() => playTone(659, 0.15), 100);
+        setTimeout(() => playTone(784, 0.2), 200);
+      },
+      wrong: () => {
+        playTone(200, 0.15);
+        setTimeout(() => playTone(150, 0.2), 100);
+      },
+      clap: () => {
+        console.log('🎉 CLAPPING SOUND STARTING!');
+        // More realistic clapping sequence with multiple claps
+        const clapPattern = [
+          { time: 0, freq: 200, vol: 0.5 },
+          { time: 100, freq: 220, vol: 0.5 },
+          { time: 200, freq: 210, vol: 0.5 },
+          { time: 400, freq: 200, vol: 0.6 },
+          { time: 500, freq: 230, vol: 0.6 },
+          { time: 600, freq: 220, vol: 0.6 },
+          { time: 800, freq: 210, vol: 0.7 },
+          { time: 900, freq: 230, vol: 0.7 },
+          { time: 1000, freq: 200, vol: 0.7 },
+          { time: 1200, freq: 220, vol: 0.6 },
+          { time: 1300, freq: 240, vol: 0.6 },
+          { time: 1400, freq: 210, vol: 0.5 }
+        ];
+        
+        clapPattern.forEach((clap, index) => {
+          setTimeout(() => {
+            console.log(`Clap ${index + 1}`);
+            playTone(clap.freq, 0.08, clap.vol);
+          }, clap.time);
+        });
+      }
+    };
+
+    // Utility functions
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function makeItems() {
+      const puzzle = currentPuzzles[currentPuzzleIndex];
+      return shuffle(puzzle.groups.flatMap(g => 
+        g.items.map(emoji => ({ emoji, group: g.name }))
+      ));
+    }
+
+    function isFound(item) {
+      return found.some(g => g.items.some(i => i.emoji === item.emoji));
+    }
+
+    function isSelected(item) {
+      return selected.some(s => s.emoji === item.emoji);
+    }
+
+    // Screen management
+    function showScreen(screenId) {
+      console.log('Showing screen:', screenId);
+      
+      // Hide ALL screens
+      document.getElementById('homeScreen').classList.remove('active');
+      document.getElementById('gameScreen').classList.remove('active');
+      
+      // Show only the target screen
+      document.getElementById(screenId).classList.add('active');
+      
+      console.log('Home screen classes:', document.getElementById('homeScreen').className);
+      console.log('Game screen classes:', document.getElementById('gameScreen').className);
+    }
+
+    function startGame(difficulty) {
+      console.log('Starting game with difficulty:', difficulty);
+      currentDifficulty = difficulty;
+      currentPuzzles = puzzlesByDifficulty[difficulty];
+      console.log('Current puzzles:', currentPuzzles);
+      currentPuzzleIndex = 0;
+      showScreen('gameScreen');
+      console.log('Screen switched to gameScreen');
+      // Use setTimeout to ensure screen is rendered before initializing game
+      setTimeout(() => {
+        console.log('Calling restart...');
+        restart();
+      }, 50);
+    }
+
+    function goHome() {
+      showScreen('homeScreen');
+      confettiParticles = [];
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // Render functions
+    function render() {
+      renderPuzzleName();
+      renderStrikes();
+      renderFoundGroups();
+      renderGrid();
+      updateButtons();
+    }
+
+    function renderPuzzleName() {
+      document.getElementById('puzzleName').textContent = currentPuzzles[currentPuzzleIndex].name;
+      document.getElementById('prevBtn').disabled = currentPuzzleIndex === 0;
+      document.getElementById('nextBtn').disabled = currentPuzzleIndex === currentPuzzles.length - 1;
+    }
+
+    function renderStrikes() {
+      const gameWon = found.length === currentPuzzles[currentPuzzleIndex].groups.length;
+      const gameLost = strikes >= maxStrikes;
+      
+      if (gameWon || gameLost) {
+        document.getElementById('strikes').style.display = 'none';
+      } else {
+        document.getElementById('strikes').style.display = 'block';
+        const hearts = '❤️'.repeat(maxStrikes - strikes);
+        const broken = '🖤'.repeat(strikes);
+        document.getElementById('strikes').textContent = `Tries: ${hearts}${broken}`;
+      }
+    }
+
+    function renderFoundGroups() {
+      const container = document.getElementById('foundGroups');
+      container.innerHTML = '';
+      
+      found.forEach(group => {
+        const row = document.createElement('div');
+        row.className = 'group-row';
+        
+        const label = document.createElement('div');
+        label.className = 'group-label';
+        label.textContent = group.name;
+        row.appendChild(label);
+        
+        const itemsDiv = document.createElement('div');
+        itemsDiv.className = 'group-items';
+        
+        group.items.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'card found';
+          card.textContent = item.emoji;
+          itemsDiv.appendChild(card);
+        });
+        
+        row.appendChild(itemsDiv);
+        container.appendChild(row);
+      });
+    }
+
+    function renderGrid() {
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+      
+      items.forEach((item, idx) => {
+        if (!isFound(item)) {
+          const card = document.createElement('div');
+          card.className = 'card';
+          if (isSelected(item)) card.classList.add('selected');
+          card.textContent = item.emoji;
+          card.onclick = () => clickCard(item);
+          grid.appendChild(card);
+        }
+      });
+    }
+
+    function updateButtons() {
+      const gameWon = found.length === currentPuzzles[currentPuzzleIndex].groups.length;
+      const gameLost = strikes >= maxStrikes;
+      
+      document.getElementById('checkBtn').textContent = `Check (${selected.length}/4)`;
+      document.getElementById('checkBtn').disabled = selected.length !== 4 || gameWon || gameLost;
+      document.getElementById('shuffleBtn').disabled = gameWon || gameLost;
+      document.getElementById('restartBtn').textContent = (gameWon || gameLost) ? 'Play Again' : 'Restart';
+    }
+
+    function showMessage(text, type = '') {
+      const msg = document.getElementById('message');
+      msg.textContent = text;
+      msg.className = 'message ' + type;
+      msg.style.display = text ? 'block' : 'none';
+    }
+
+    function showStars() {
+      const stars = document.createElement('div');
+      stars.className = 'stars';
+      stars.textContent = '🌟🌟🌟';
+      document.body.appendChild(stars);
+      setTimeout(() => stars.remove(), 1000);
+    }
+
+    // Game logic
+    function clickCard(item) {
+      const gameWon = found.length === currentPuzzles[currentPuzzleIndex].groups.length;
+      const gameLost = strikes >= maxStrikes;
+      
+      if (isFound(item) || gameLost || gameWon) return;
+      
+      sounds.click();
+      
+      if (isSelected(item)) {
+        selected = selected.filter(s => s.emoji !== item.emoji);
+      } else if (selected.length < 4) {
+        selected.push(item);
+        showMessage('');
+      }
+      
+      render();
+    }
+
+    function checkGroup() {
+      if (selected.length !== 4) return;
+      
+      const allSameGroup = selected.every(it => it.group === selected[0].group);
+      
+      if (allSameGroup) {
+        sounds.correct();
+        const groupName = selected[0].group;
+        found.push({ name: groupName, items: selected });
+        showMessage(`✅ Great job! You found ${groupName}!`);
+        showStars();
+        
+        if (found.length === currentPuzzles[currentPuzzleIndex].groups.length) {
+          sounds.clap();
+          showMessage('🎉 You found all groups! Amazing! 🎉', 'win');
+          startConfetti();
+        }
+      } else {
+        sounds.wrong();
+        strikes++;
+        
+        if (strikes >= maxStrikes) {
+          showMessage('❌ Game Over! Try again!', 'lose');
+        } else {
+          showMessage(`❌ Not quite right. ${maxStrikes - strikes} tries left!`);
+        }
+      }
+      
+      selected = [];
+      render();
+    }
+
+    function shuffleCards() {
+      sounds.click();
+      items = shuffle(items);
+      render();
+    }
+
+    function restart() {
+      items = makeItems();
+      selected = [];
+      found = [];
+      strikes = 0;
+      showMessage('');
+      confettiParticles = [];
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      render();
+    }
+
+    function changePuzzle(direction) {
+      const newIndex = currentPuzzleIndex + direction;
+      if (newIndex >= 0 && newIndex < currentPuzzles.length) {
+        currentPuzzleIndex = newIndex;
+        restart();
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundToggle').textContent = soundEnabled ? '🔊' : '🔇';
+    }
+
+    // Event listeners
+    window.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('easyBtn').addEventListener('click', () => startGame('easy'));
+      document.getElementById('mediumBtn').addEventListener('click', () => startGame('medium'));
+      document.getElementById('hardBtn').addEventListener('click', () => startGame('hard'));
+      document.getElementById('checkBtn').addEventListener('click', checkGroup);
+      document.getElementById('shuffleBtn').addEventListener('click', shuffleCards);
+      document.getElementById('restartBtn').addEventListener('click', restart);
+      document.getElementById('prevBtn').addEventListener('click', () => changePuzzle(-1));
+      document.getElementById('nextBtn').addEventListener('click', () => changePuzzle(1));
+      document.getElementById('soundToggle').addEventListener('click', toggleSound);
+      document.getElementById('homeBtn').addEventListener('click', goHome);
+      
+      console.log('Game initialized!');
+    });
+
+    // Keyboard support
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && selected.length === 4) {
+        checkGroup();
+      } else if (e.key === 'Escape') {
+        selected = [];
+        render();
+      }
+    });
+
+    // Handle window resize for confetti
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
