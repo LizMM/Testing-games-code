@@ -213,41 +213,41 @@
     
     .strikes {
       text-align: center;
-      font-size: 20px;
-      margin-bottom: 6px;
+      font-size: 16px;
+      margin-bottom: 4px;
       background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
-      padding: 6px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      border: 3px solid white;
+      padding: 4px;
+      border-radius: 8px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      border: 2px solid white;
       font-weight: 900;
       color: white;
-      text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
       flex-shrink: 0;
     }
     
     .message {
       text-align: center;
-      margin-bottom: 8px;
-      padding: 8px;
+      margin-bottom: 5px;
+      padding: 6px;
       background: white;
-      border-radius: 12px;
+      border-radius: 10px;
       font-weight: 900;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      font-size: 16px;
-      border: 3px solid #FF6B9D;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      font-size: 14px;
+      border: 2px solid #FF6B9D;
       flex-shrink: 0;
     }
     
     .message.win { 
       color: #16a34a; 
-      font-size: 18px;
+      font-size: 16px;
       border-color: #16a34a;
       animation: wiggle 0.5s ease;
     }
     .message.lose { 
       color: #dc2626; 
-      font-size: 17px;
+      font-size: 15px;
       border-color: #dc2626;
     }
     
@@ -258,21 +258,19 @@
     }
     
     .found-groups {
-      margin-bottom: 8px;
+      margin-bottom: 5px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 5px;
       flex-shrink: 0;
-      max-height: 20vh;
-      overflow-y: auto;
     }
     
     .group-row {
       background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
-      padding: 10px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      border: 3px solid white;
+      padding: 6px;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      border: 2px solid white;
       animation: slideDown 0.4s ease;
     }
     
@@ -282,40 +280,39 @@
     }
     
     .group-label {
-      font-size: 14px;
+      font-size: 11px;
       font-weight: 900;
       color: white;
       text-align: center;
-      margin-bottom: 8px;
+      margin-bottom: 5px;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
-      text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+      letter-spacing: 1px;
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
     }
     
     .group-items {
       display: flex;
       justify-content: center;
-      gap: 8px;
+      gap: 5px;
       flex-wrap: wrap;
     }
     
     .grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 10px;
-      flex-shrink: 0;
+      gap: 8px;
+      margin-bottom: 6px;
       flex-grow: 1;
-      align-content: start;
+      align-content: center;
     }
     
     .card {
-      font-size: 40px;
-      padding: 16px;
+      font-size: 34px;
+      padding: 12px;
       text-align: center;
-      border-radius: 14px;
+      border-radius: 12px;
       background: linear-gradient(135deg, #FFFFFF 0%, #F0F8FF 100%);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
       cursor: pointer;
       transition: all 0.2s;
       user-select: none;
@@ -327,57 +324,57 @@
     }
     
     .card:hover { 
-      transform: translateY(-3px) rotate(2deg);
-      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+      transform: translateY(-2px) rotate(2deg);
+      box-shadow: 0 5px 14px rgba(0,0,0,0.3);
       border-color: #FF6B9D;
     }
     
     .card.selected {
       background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
       border: 3px solid #FF1493;
-      transform: translateY(-3px) scale(1.08) rotate(-2deg);
-      box-shadow: 0 6px 16px rgba(255,20,147,0.5);
+      transform: translateY(-2px) scale(1.05) rotate(-2deg);
+      box-shadow: 0 5px 14px rgba(255,20,147,0.5);
     }
     
     .card.found {
       background: linear-gradient(135deg, #00FA9A 0%, #00CED1 100%);
       color: white;
-      font-size: 32px;
-      border: 3px solid white;
+      font-size: 28px;
+      border: 2px solid white;
       text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
     }
     
     .buttons {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       flex-wrap: wrap;
       justify-content: center;
-      margin-bottom: 8px;
+      margin-bottom: 5px;
       flex-shrink: 0;
     }
     
     .btn {
-      padding: 10px 18px;
-      font-size: 14px;
+      padding: 8px 14px;
+      font-size: 13px;
       font-weight: 900;
-      border-radius: 12px;
-      border: 3px solid white;
+      border-radius: 10px;
+      border: 2px solid white;
       cursor: pointer;
       background: linear-gradient(135deg, #C8B6FF 0%, #9D84FF 100%);
       color: white;
       transition: all 0.2s;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
       text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
     }
     
     .btn:hover:not(:disabled) {
       transform: translateY(-2px) scale(1.05);
-      box-shadow: 0 5px 14px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
     
     .btn.primary {
       background: linear-gradient(135deg, #FF6B9D 0%, #FF1493 100%);
-      font-size: 15px;
+      font-size: 14px;
     }
     
     .btn:disabled {
@@ -388,9 +385,9 @@
     .hint {
       text-align: center;
       color: white;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
-      text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
       flex-shrink: 0;
     }
     
