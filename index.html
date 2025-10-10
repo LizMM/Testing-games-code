@@ -2,38 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- Prevent zoom and enable web-app style -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>Kids Connections - Daily Challenge</title>
   <style>
+    :root { --vh: 1vh; } /* fallback for older iOS */
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    
+
+    /* Use the visible viewport height on iPad/iOS */
     html, body {
-      height: 100%;
-      overflow: hidden;
-      position: fixed;
+      height: 100svh;
+      height: 100dvh;
+      height: calc(var(--vh, 1vh) * 100);
+      overflow: hidden;    /* no page scroll */
       width: 100%;
+      /* remove position: fixed; it can cause iOS layout quirks */
+      -webkit-text-size-adjust: 100%;
     }
-    
+
     body {
       font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif;
       background: linear-gradient(135deg, #FFD93D 0%, #FF6B9D 50%, #C8B6FF 100%);
       background-attachment: fixed;
     }
-    
+
+    /* Screens fill the viewport and never scroll the page */
     .screen {
       display: none;
       width: 100%;
-      height: 100vh;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+      height: 100svh;
+      height: 100dvh;
+      height: calc(var(--vh, 1vh) * 100);
+      overflow: hidden; /* was auto; this prevents page scroll */
     }
-    
-    .screen.active { 
+
+    .screen.active {
       display: flex;
       flex-direction: column;
     }
-    
+
     /* HOME SCREEN */
     .home-screen {
       flex-direction: column;
@@ -42,11 +51,9 @@
       padding: 15px;
       text-align: center;
     }
-    
-    .home-screen.active {
-      display: flex;
-    }
-    
+
+    .home-screen.active { display: flex; }
+
     .home-title {
       color: white;
       font-size: 38px;
@@ -55,7 +62,7 @@
       letter-spacing: 2px;
       margin-bottom: 15px;
     }
-    
+
     .daily-info {
       background: white;
       padding: 12px;
@@ -65,227 +72,117 @@
       border: 3px solid #FF6B9D;
       max-width: 350px;
     }
-    
-    .daily-info h2 {
-      font-size: 18px;
-      color: #FF1493;
-      margin-bottom: 6px;
-    }
-    
-    .daily-info p {
-      font-size: 13px;
-      color: #333;
-      margin-bottom: 4px;
-    }
-    
+
+    .daily-info h2 { font-size: 18px; color: #FF1493; margin-bottom: 6px; }
+    .daily-info p  { font-size: 13px; color: #333; margin-bottom: 4px; }
+
     .score-display {
-      font-size: 24px;
-      font-weight: 900;
-      color: #00CED1;
-      margin-top: 6px;
+      font-size: 24px; font-weight: 900; color: #00CED1; margin-top: 6px;
     }
-    
+
     .difficulty-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      width: 100%;
-      max-width: 350px;
+      display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 350px;
     }
-    
+
     .difficulty-btn {
-      padding: 18px;
-      font-size: 22px;
-      font-weight: 900;
-      border-radius: 15px;
-      border: 4px solid white;
-      cursor: pointer;
-      color: white;
-      transition: all 0.2s;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      padding: 18px; font-size: 22px; font-weight: 900; border-radius: 15px; border: 4px solid white;
+      cursor: pointer; color: white; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
       text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
     }
-    
-    .difficulty-btn.easy {
-      background: linear-gradient(135deg, #00FA9A 0%, #00CED1 100%);
-    }
-    
-    .difficulty-btn.medium {
-      background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
-    }
-    
-    .difficulty-btn.hard {
-      background: linear-gradient(135deg, #FF6B9D 0%, #FF1493 100%);
-    }
-    
-    .difficulty-btn:hover {
-      transform: scale(1.03);
-    }
-    
-    .puzzle-status {
-      font-size: 12px;
-      margin-top: 6px;
-      opacity: 0.9;
-    }
-    
+    .difficulty-btn.easy   { background: linear-gradient(135deg, #00FA9A 0%, #00CED1 100%); }
+    .difficulty-btn.medium { background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%); }
+    .difficulty-btn.hard   { background: linear-gradient(135deg, #FF6B9D 0%, #FF1493 100%); }
+    .difficulty-btn:hover  { transform: scale(1.03); }
+
+    .puzzle-status { font-size: 12px; margin-top: 6px; opacity: 0.9; }
+
     /* GAME SCREEN - ULTRA COMPACT FOR IPAD */
     .container {
       padding: 2px;
-      height: 100vh;
+      height: 100svh;
+      height: 100dvh;
+      height: calc(var(--vh, 1vh) * 100);
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      overflow: hidden; /* no scroll in the container */
+      /* optional: respect safe area if used standalone PWA
+      padding-bottom: env(safe-area-inset-bottom); */
     }
-    
+
     .header {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      margin-bottom: 2px;
-      flex-shrink: 0;
+      display: flex; justify-content: center; align-items: center; position: relative;
+      margin-bottom: 2px; flex-shrink: 0;
     }
-    
+
     h1 {
       color: white;
-      font-size: 16px;
+      font-size: clamp(14px, 2.8vmin, 16px);
       font-weight: 900;
       text-shadow: 1px 1px 0 #FF1493, 2px 2px 0 #00CED1;
       letter-spacing: 0.5px;
     }
-    
+
     .home-btn, .sound-toggle {
       position: absolute;
       background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
-      border: 2px solid white;
-      border-radius: 50%;
-      width: 26px;
-      height: 26px;
-      font-size: 12px;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      transition: transform 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      border: 2px solid white; border-radius: 50%;
+      width: 26px; height: 26px; font-size: 12px; cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.2s;
+      display: flex; align-items: center; justify-content: center;
     }
-    
-    .home-btn { left: 0; }
-    .sound-toggle { right: 0; }
-    
+    .home-btn { left: 0; } .sound-toggle { right: 0; }
+
     .puzzle-selector {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 4px;
-      margin-bottom: 1px;
-      background: linear-gradient(135deg, #FF6B9D 0%, #FFA07A 100%);
-      padding: 2px;
-      border-radius: 5px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      border: 2px solid white;
-      flex-shrink: 0;
+      display: flex; justify-content: center; align-items: center; gap: 4px;
+      margin-bottom: 1px; background: linear-gradient(135deg, #FF6B9D 0%, #FFA07A 100%);
+      padding: 2px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      border: 2px solid white; flex-shrink: 0;
     }
-    
-    .puzzle-name {
-      font-size: 9px;
-      font-weight: 900;
-      color: white;
-      text-align: center;
-      text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
-    }
-    
-    .nav-btn {
-      padding: 1px 5px;
-      font-size: 9px;
-      font-weight: 700;
-      border-radius: 4px;
-      border: 2px solid white;
-      background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
-      color: white;
-      cursor: pointer;
-    }
-    
+
+    .puzzle-name { font-size: clamp(8px, 1.8vmin, 10px); font-weight: 900; color: white; text-align: center; text-shadow: 1px 1px 0 rgba(0,0,0,0.2); }
+    .nav-btn     { padding: 1px 5px; font-size: clamp(8px, 1.8vmin, 10px); font-weight: 700; border-radius: 4px; border: 2px solid white; background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%); color: white; cursor: pointer; }
     .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-    
+
     .strikes {
-      text-align: center;
-      font-size: 12px;
-      margin-bottom: 1px;
+      text-align: center; font-size: 12px; margin-bottom: 1px;
       background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
-      padding: 1px;
-      border-radius: 4px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      border: 2px solid white;
-      font-weight: 900;
-      color: white;
-      text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
-      flex-shrink: 0;
+      padding: 1px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      border: 2px solid white; font-weight: 900; color: white; text-shadow: 1px 1px 0 rgba(0,0,0,0.2); flex-shrink: 0;
     }
-    
+
     .message {
-      text-align: center;
-      margin-bottom: 1px;
-      padding: 2px;
-      background: white;
-      border-radius: 5px;
-      font-weight: 900;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      font-size: 9px;
-      border: 2px solid #FF6B9D;
-      flex-shrink: 0;
+      text-align: center; margin-bottom: 1px; padding: 2px; background: white; border-radius: 5px; font-weight: 900;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2); font-size: clamp(8px, 1.8vmin, 10px);
+      border: 2px solid #FF6B9D; flex-shrink: 0;
     }
-    
-    .message.win { color: #16a34a; font-size: 10px; border-color: #16a34a; }
-    .message.lose { color: #dc2626; font-size: 9px; border-color: #dc2626; }
-    
+    .message.win  { color: #16a34a; border-color: #16a34a; }
+    .message.lose { color: #dc2626; border-color: #dc2626; }
+
     .found-groups {
-      margin-bottom: 1px;
-      display: flex;
-      flex-direction: row;
-      gap: 2px;
-      flex-shrink: 0;
-      overflow-x: auto;
-      max-height: 50px;
+      margin-bottom: 1px; display: flex; flex-direction: row; gap: 2px;
+      flex-shrink: 0; overflow-x: auto; max-height: 48px; /* slightly trimmed */
     }
-    
+
     .group-row {
-      background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
-      padding: 2px;
-      border-radius: 5px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      border: 2px solid white;
-      min-width: 130px;
+      background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%); padding: 2px; border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 2px solid white; min-width: 130px;
     }
-    
-    .group-label {
-      font-size: 7px;
-      font-weight: 900;
-      color: white;
-      text-align: center;
-      margin-bottom: 1px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
-    }
-    
-    .group-items {
-      display: flex;
-      justify-content: center;
-      gap: 2px;
-    }
-    
+    .group-label { font-size: 7px; font-weight: 900; color: white; text-align: center; margin-bottom: 1px; text-transform: uppercase; letter-spacing: 0.5px; text-shadow: 1px 1px 0 rgba(0,0,0,0.3); }
+    .group-items { display: flex; justify-content: center; gap: 2px; }
+
+    /* The grid fills remaining space, no overflow */
     .grid {
+      flex: 1;             /* take all remaining vertical space */
+      min-height: 0;       /* allow flexbox to actually shrink this area */
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 2px;
       margin-bottom: 1px;
-      flex-grow: 1;
-      align-content: center;
+      align-content: center; /* vertically center when there’s extra space */
     }
-    
+
     .card {
-      font-size: 22px;
+      font-size: clamp(18px, 6.5vmin, 26px);
       padding: 1px;
       text-align: center;
       border-radius: 4px;
@@ -294,71 +191,33 @@
       cursor: pointer;
       transition: all 0.2s;
       user-select: none;
-      aspect-ratio: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      aspect-ratio: 1 / 1;
+      display: flex; align-items: center; justify-content: center;
       border: 2px solid #FFD93D;
     }
-    
-    .card:hover { transform: translateY(-1px); border-color: #FF6B9D; }
-    .card.selected {
-      background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%);
-      border: 2px solid #FF1493;
-      transform: scale(1.02);
-    }
-    .card.found {
-      background: linear-gradient(135deg, #00FA9A 0%, #00CED1 100%);
-      color: white;
-      font-size: 18px;
-      border: 2px solid white;
-    }
-    
+
+    .card:hover   { transform: translateY(-1px); border-color: #FF6B9D; }
+    .card.selected{ background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%); border: 2px solid #FF1493; transform: scale(1.02); }
+    .card.found   { background: linear-gradient(135deg, #00FA9A 0%, #00CED1 100%); color: white; font-size: clamp(14px, 5vmin, 22px); border: 2px solid white; }
+
     .buttons {
-      display: flex;
-      gap: 2px;
-      justify-content: center;
-      margin-bottom: 1px;
-      flex-shrink: 0;
+      display: flex; gap: 2px; justify-content: center; margin-bottom: 1px; flex-shrink: 0;
     }
-    
-    .btn {
-      padding: 4px 7px;
-      font-size: 9px;
-      font-weight: 900;
-      border-radius: 4px;
-      border: 2px solid white;
-      cursor: pointer;
-      background: linear-gradient(135deg, #C8B6FF 0%, #9D84FF 100%);
-      color: white;
-      transition: all 0.2s;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    
-    .btn.primary {
-      background: linear-gradient(135deg, #FF6B9D 0%, #FF1493 100%);
-      font-size: 10px;
-    }
-    
+    .btn { padding: 4px 7px; font-size: clamp(8px, 1.8vmin, 10px); font-weight: 900; border-radius: 4px; border: 2px solid white; cursor: pointer; background: linear-gradient(135deg, #C8B6FF 0%, #9D84FF 100%); color: white; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .btn.primary { background: linear-gradient(135deg, #FF6B9D 0%, #FF1493 100%); font-size: clamp(9px, 2vmin, 11px); }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-    
-    .hint {
-      display: none;
-    }
-    
+
+    .hint { display: none; }
+
     .confetti-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 9999;
+      position: fixed; top: 0; left: 0; width: 100%;
+      height: 100svh; height: 100dvh; height: calc(var(--vh, 1vh) * 100);
+      pointer-events: none; z-index: 9999;
     }
-    
+
     @media (max-width: 768px) {
-      .card { font-size: 26px; padding: 6px; }
-      .card.found { font-size: 22px; }
+      .card       { font-size: clamp(18px, 6vmin, 24px); }
+      .card.found { font-size: clamp(14px, 4.8vmin, 20px); }
     }
   </style>
 </head>
@@ -366,7 +225,6 @@
   <!-- HOME SCREEN -->
   <div id="homeScreen" class="screen home-screen active">
     <h1 class="home-title">Kids Connections</h1>
-    
     <div class="daily-info">
       <h2>Today's Challenge</h2>
       <p id="todayDate"></p>
@@ -374,18 +232,14 @@
       <div class="score-display" id="todayScore">0/600</div>
       <p id="storageWarning" style="font-size: 10px; color: #dc2626; display: none;">⚠️ Scores won't save</p>
     </div>
-    
     <div class="difficulty-buttons">
-      <button class="difficulty-btn easy" onclick="startGame('easy')">
-        😊 Easy
+      <button class="difficulty-btn easy" onclick="startGame('easy')">😊 Easy
         <div class="puzzle-status" id="easyStatus">0/2 done</div>
       </button>
-      <button class="difficulty-btn medium" onclick="startGame('medium')">
-        🤔 Medium
+      <button class="difficulty-btn medium" onclick="startGame('medium')">🤔 Medium
         <div class="puzzle-status" id="mediumStatus">0/2 done</div>
       </button>
-      <button class="difficulty-btn hard" onclick="startGame('hard')">
-        🤯 Hard
+      <button class="difficulty-btn hard" onclick="startGame('hard')">🤯 Hard
         <div class="puzzle-status" id="hardStatus">0/2 done</div>
       </button>
     </div>
@@ -399,33 +253,53 @@
         <h1 id="gameTitle">Kids Connections</h1>
         <button class="sound-toggle" id="soundToggle">🔊</button>
       </div>
-      
+
       <div class="puzzle-selector">
         <button class="nav-btn" id="prevBtn">←</button>
         <span class="puzzle-name" id="puzzleName"></span>
         <button class="nav-btn" id="nextBtn">→</button>
       </div>
-      
+
       <div class="strikes" id="strikes"></div>
       <div class="message" id="message"></div>
       <div class="found-groups" id="foundGroups"></div>
+
+      <!-- This grid now expands to fill the remaining viewport height -->
       <div class="grid" id="grid"></div>
-      
+
       <div class="buttons">
         <button class="btn primary" id="checkBtn">Check (0/4)</button>
         <button class="btn" id="shuffleBtn">Shuffle</button>
         <button class="btn" id="restartBtn">Restart</button>
       </div>
-      
+
       <div class="hint">Tap to deselect!</div>
     </div>
   </div>
 
   <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
 
+  <!-- Viewport height fix for iOS + keep confetti canvas sized exactly -->
   <script>
-    // PUZZLE CATALOGUE - Replace with the extended version provided separately
-    const puzzleCatalogue = {
+    function setVh() {
+      const h = (window.visualViewport ? window.visualViewport.height : window.innerHeight) * 0.01;
+      document.documentElement.style.setProperty('--vh', h + 'px');
+      const c = document.getElementById('confettiCanvas');
+      if (c) {
+        c.width  = window.innerWidth;
+        c.height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+      }
+    }
+    window.addEventListener('resize', setVh);
+    window.addEventListener('orientationchange', setVh);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', setVh);
+    document.addEventListener('DOMContentLoaded', setVh);
+  </script>
+
+  <script>
+    /* ---- your existing JS (unchanged) starts here ---- */
+    // PUZZLE CATALOGUE ...
+    const puzzleCatalogue = { /* ... keep your existing catalogue ... */ 
       easy: [
         { name: "Set 1", groups: [
           { name: "Fruits", items: ["🍎", "🍌", "🍇", "🍊"] },
@@ -470,405 +344,71 @@
       ]
     };
 
-    // DAILY PUZZLE SELECTION
-    function getDayOfYear() {
-      const now = new Date();
-      const start = new Date(now.getFullYear(), 0, 0);
-      const diff = now - start;
-      const oneDay = 1000 * 60 * 60 * 24;
-      return Math.floor(diff / oneDay);
-    }
+    // (The rest of your script is unchanged)
+    // ... getDayOfYear, getTodaysPuzzles, localStorage helpers, state vars ...
 
-    function getTodaysPuzzles(difficulty) {
-      const day = getDayOfYear();
-      const puzzles = puzzleCatalogue[difficulty];
-      const total = puzzles.length;
-      const index1 = (day * 2) % total;
-      const index2 = (day * 2 + 1) % total;
-      return [puzzles[index1], puzzles[index2]];
-    }
+    function getDayOfYear() { const now=new Date(); const start=new Date(now.getFullYear(),0,0); const diff=now-start; const oneDay=1000*60*60*24; return Math.floor(diff/oneDay); }
+    function getTodaysPuzzles(difficulty){ const day=getDayOfYear(); const puzzles=puzzleCatalogue[difficulty]; const total=puzzles.length; const index1=(day*2)%total; const index2=(day*2+1)%total; return [puzzles[index1], puzzles[index2]]; }
 
-    // SCORE TRACKING
-    function getTodayKey() {
-      const today = new Date();
-      return `${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}`;
-    }
+    function getTodayKey(){ const today=new Date(); return `${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}`; }
+    function loadDailyProgress(){ try{ const key=getTodayKey(); const data=localStorage.getItem(`daily_${key}`); return data?JSON.parse(data):{easy:{completed:[]},medium:{completed:[]},hard:{completed:[]}};}catch(e){return {easy:{completed:[]},medium:{completed:[]},hard:{completed:[]}};} }
+    function saveDailyProgress(p){ try{ const key=getTodayKey(); localStorage.setItem(`daily_${key}`, JSON.stringify(p)); }catch(e){} }
+    function calculateScore(p){ let s=0; ['easy','medium','hard'].forEach(d=>{ s+=p[d].completed.length*100; }); return s; }
 
-    function loadDailyProgress() {
-      try {
-        const key = getTodayKey();
-        const data = localStorage.getItem(`daily_${key}`);
-        return data ? JSON.parse(data) : {
-          easy: { completed: [] },
-          medium: { completed: [] },
-          hard: { completed: [] }
-        };
-      } catch (e) {
-        console.warn('localStorage not available:', e);
-        return {
-          easy: { completed: [] },
-          medium: { completed: [] },
-          hard: { completed: [] }
-        };
-      }
-    }
+    let currentDifficulty='easy', currentPuzzles=[], currentPuzzleIndex=0, items=[], selected=[], found=[], strikes=0, soundEnabled=true;
+    const maxStrikes=4; let dailyProgress=loadDailyProgress();
 
-    function saveDailyProgress(progress) {
-      try {
-        const key = getTodayKey();
-        localStorage.setItem(`daily_${key}`, JSON.stringify(progress));
-      } catch (e) {
-        console.warn('Cannot save progress:', e);
-      }
-    }
+    // Confetti
+    const canvas=document.getElementById('confettiCanvas');
+    const ctx=canvas.getContext('2d');
+    let confettiParticles=[];
+    function ConfettiPiece(){ this.x=Math.random()*canvas.width; this.y=-20; this.size=Math.random()*10+5; this.speedY=Math.random()*3+2; this.speedX=Math.random()*2-1; this.color=['#FFD93D','#FF6B9D','#C8B6FF','#00FA9A','#00CED1'][Math.floor(Math.random()*5)]; }
+    ConfettiPiece.prototype.update=function(){ this.y+=this.speedY; this.x+=this.speedX; return this.y<=canvas.height; }
+    ConfettiPiece.prototype.draw=function(){ ctx.fillStyle=this.color; ctx.fillRect(this.x,this.y,this.size,this.size); }
+    function startConfetti(){ for(let i=0;i<200;i++) confettiParticles.push(new ConfettiPiece()); animateConfetti(); }
+    function animateConfetti(){ ctx.clearRect(0,0,canvas.width,canvas.height); confettiParticles=confettiParticles.filter(p=>{ p.update(); p.draw(); return p.y<=canvas.height; }); if(confettiParticles.length>0) requestAnimationFrame(animateConfetti); }
 
-    function calculateScore(progress) {
-      let score = 0;
-      ['easy', 'medium', 'hard'].forEach(diff => {
-        score += progress[diff].completed.length * 100;
-      });
-      return score;
-    }
+    // Sounds (simple tones)
+    const audioContext=new (window.AudioContext||window.webkitAudioContext)();
+    function playTone(freq,dur,vol=0.3){ if(!soundEnabled) return; try{ const osc=audioContext.createOscillator(); const gain=audioContext.createGain(); osc.connect(gain); gain.connect(audioContext.destination); osc.frequency.value=freq; gain.gain.setValueAtTime(vol,audioContext.currentTime); gain.gain.exponentialRampToValueAtTime(0.01,audioContext.currentTime+dur); osc.start(audioContext.currentTime); osc.stop(audioContext.currentTime+dur);}catch(e){} }
+    const sounds={ click:()=>playTone(800,0.1), correct:()=>{ playTone(523,0.15); setTimeout(()=>playTone(659,0.15),100); setTimeout(()=>playTone(784,0.2),200); }, wrong:()=>{ playTone(200,0.15); setTimeout(()=>playTone(150,0.2),100); }, clap:()=>{ [{t:0,f:200,v:.5},{t:100,f:220,v:.5},{t:200,f:210,v:.5},{t:400,f:200,v:.6},{t:500,f:230,v:.6},{t:600,f:220,v:.6},{t:800,f:210,v:.7},{t:900,f:230,v:.7},{t:1000,f:200,v:.7}].forEach(c=>setTimeout(()=>playTone(c.f,0.08,c.v),c.t)); } };
 
-    // GAME STATE
-    let currentDifficulty = 'easy';
-    let currentPuzzles = [];
-    let currentPuzzleIndex = 0;
-    let items = [];
-    let selected = [];
-    let found = [];
-    let strikes = 0;
-    let soundEnabled = true;
-    const maxStrikes = 4;
-    let dailyProgress = loadDailyProgress();
+    function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+    function makeItems(){ const p=currentPuzzles[currentPuzzleIndex]; return shuffle(p.groups.flatMap(g=>g.items.map(e=>({emoji:e,group:g.name})))); }
+    function isFound(item){ return found.some(g=>g.items.some(i=>i.emoji===item.emoji)); }
+    function isSelected(item){ return selected.some(s=>s.emoji===item.emoji); }
 
-    // CONFETTI
-    const canvas = document.getElementById('confettiCanvas');
-    const ctx = canvas.getContext('2d');
-    let confettiParticles = [];
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    function showScreen(id){ document.getElementById('homeScreen').classList.remove('active'); document.getElementById('gameScreen').classList.remove('active'); document.getElementById(id).classList.add('active'); }
+    function updateHomeScreen(){ const today=new Date(); document.getElementById('todayDate').textContent=today.toDateString(); const score=calculateScore(dailyProgress); document.getElementById('todayScore').textContent=`${score}/600`; ['easy','medium','hard'].forEach(diff=>{ const completed=dailyProgress[diff].completed.length; document.getElementById(`${diff}Status`).textContent=`${completed}/2 done`; }); }
+    function startGame(diff){ currentDifficulty=diff; currentPuzzles=getTodaysPuzzles(diff); currentPuzzleIndex=0; showScreen('gameScreen'); setTimeout(()=>restart(),50); }
+    function goHome(){ showScreen('homeScreen'); updateHomeScreen(); confettiParticles=[]; ctx.clearRect(0,0,canvas.width,canvas.height); }
 
-    class ConfettiPiece {
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = -20;
-        this.size = Math.random() * 10 + 5;
-        this.speedY = Math.random() * 3 + 2;
-        this.speedX = Math.random() * 2 - 1;
-        this.color = ['#FFD93D', '#FF6B9D', '#C8B6FF', '#00FA9A', '#00CED1'][Math.floor(Math.random() * 5)];
-      }
-      update() {
-        this.y += this.speedY;
-        this.x += this.speedX;
-        return this.y <= canvas.height;
-      }
-      draw() {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.size, this.size);
-      }
-    }
+    function render(){ renderPuzzleName(); renderStrikes(); renderFoundGroups(); renderGrid(); updateButtons(); }
+    function renderPuzzleName(){ document.getElementById('puzzleName').textContent=`${currentDifficulty.toUpperCase()} ${currentPuzzles[currentPuzzleIndex].name}`; document.getElementById('prevBtn').disabled=currentPuzzleIndex===0; document.getElementById('nextBtn').disabled=currentPuzzleIndex===currentPuzzles.length-1; }
+    function renderStrikes(){ const gameWon=found.length===currentPuzzles[currentPuzzleIndex].groups.length; const gameLost=strikes>=maxStrikes; const el=document.getElementById('strikes'); if(gameWon||gameLost){ el.style.display='none'; } else { el.style.display='block'; el.textContent=`${'❤️'.repeat(maxStrikes-strikes)}${'🖤'.repeat(strikes)}`; } }
+    function renderFoundGroups(){ const container=document.getElementById('foundGroups'); container.innerHTML=''; found.forEach(group=>{ const row=document.createElement('div'); row.className='group-row'; const label=document.createElement('div'); label.className='group-label'; label.textContent=group.name; row.appendChild(label); const itemsDiv=document.createElement('div'); itemsDiv.className='group-items'; group.items.forEach(item=>{ const card=document.createElement('div'); card.className='card found'; card.textContent=item.emoji; itemsDiv.appendChild(card); }); row.appendChild(itemsDiv); container.appendChild(row); }); }
+    function renderGrid(){ const grid=document.getElementById('grid'); grid.innerHTML=''; items.forEach(item=>{ if(!isFound(item)){ const card=document.createElement('div'); card.className='card'; if(isSelected(item)) card.classList.add('selected'); card.textContent=item.emoji; card.onclick=()=>clickCard(item); grid.appendChild(card);} }); }
+    function updateButtons(){ const gameWon=found.length===currentPuzzles[currentPuzzleIndex].groups.length; const gameLost=strikes>=maxStrikes; const check=document.getElementById('checkBtn'); check.textContent=`Check (${selected.length}/4)`; check.disabled=selected.length!==4||gameWon||gameLost; document.getElementById('shuffleBtn').disabled=gameWon||gameLost; document.getElementById('restartBtn').textContent=(gameWon||gameLost)?'Again':'Restart'; }
+    function showMessage(text,type=''){ const msg=document.getElementById('message'); msg.textContent=text; msg.className='message '+type; msg.style.display=text?'block':'none'; }
 
-    function startConfetti() {
-      for (let i = 0; i < 200; i++) confettiParticles.push(new ConfettiPiece());
-      animateConfetti();
-    }
+    function clickCard(item){ const gameWon=found.length===currentPuzzles[currentPuzzleIndex].groups.length; const gameLost=strikes>=maxStrikes; if(isFound(item)||gameLost||gameWon) return; sounds.click(); if(isSelected(item)){ selected=selected.filter(s=>s.emoji!==item.emoji); } else if(selected.length<4){ selected.push(item); showMessage(''); } render(); }
+    function checkGroup(){ if(selected.length!==4) return; const allSame=selected.every(it=>it.group===selected[0].group); if(allSame){ sounds.correct(); const groupName=selected[0].group; found.push({name:groupName,items:selected}); showMessage(`✅ ${groupName}!`); if(found.length===currentPuzzles[currentPuzzleIndex].groups.length){ sounds.clap(); showMessage('🎉 Complete!','win'); startConfetti(); const puzzleId=`${currentDifficulty}-${currentPuzzleIndex}`; if(!dailyProgress[currentDifficulty].completed.includes(puzzleId)){ dailyProgress[currentDifficulty].completed.push(puzzleId); saveDailyProgress(dailyProgress);} } } else { sounds.wrong(); strikes++; if(strikes>=maxStrikes){ showMessage('❌ Game Over!','lose'); } else { showMessage(`❌ ${maxStrikes-strikes} left`); } } selected=[]; render(); }
+    function shuffleCards(){ sounds.click(); items=shuffle(items); render(); }
+    function restart(){ items=makeItems(); selected=[]; found=[]; strikes=0; showMessage(''); confettiParticles=[]; ctx.clearRect(0,0,canvas.width,canvas.height); render(); }
+    function changePuzzle(d){ const newIndex=currentPuzzleIndex+d; if(newIndex>=0&&newIndex<currentPuzzles.length){ currentPuzzleIndex=newIndex; restart(); } }
 
-    function animateConfetti() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      confettiParticles = confettiParticles.filter(p => {
-        p.update();
-        p.draw();
-        return p.y <= canvas.height;
-      });
-      if (confettiParticles.length > 0) requestAnimationFrame(animateConfetti);
-    }
+    window.addEventListener('DOMContentLoaded', function(){
+      try{ localStorage.setItem('test','test'); localStorage.removeItem('test'); }
+      catch(e){ document.getElementById('storageWarning').style.display='block'; }
 
-    // SOUNDS
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    
-    function playTone(freq, dur, vol = 0.3) {
-      if (!soundEnabled) return;
-      try {
-        const osc = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-        osc.connect(gain);
-        gain.connect(audioContext.destination);
-        osc.frequency.value = freq;
-        gain.gain.setValueAtTime(vol, audioContext.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + dur);
-        osc.start(audioContext.currentTime);
-        osc.stop(audioContext.currentTime + dur);
-      } catch (e) {}
-    }
-    
-    const sounds = {
-      click: () => playTone(800, 0.1),
-      correct: () => {
-        playTone(523, 0.15);
-        setTimeout(() => playTone(659, 0.15), 100);
-        setTimeout(() => playTone(784, 0.2), 200);
-      },
-      wrong: () => {
-        playTone(200, 0.15);
-        setTimeout(() => playTone(150, 0.2), 100);
-      },
-      clap: () => {
-        const claps = [
-          { time: 0, freq: 200, vol: 0.5 },
-          { time: 100, freq: 220, vol: 0.5 },
-          { time: 200, freq: 210, vol: 0.5 },
-          { time: 400, freq: 200, vol: 0.6 },
-          { time: 500, freq: 230, vol: 0.6 },
-          { time: 600, freq: 220, vol: 0.6 },
-          { time: 800, freq: 210, vol: 0.7 },
-          { time: 900, freq: 230, vol: 0.7 },
-          { time: 1000, freq: 200, vol: 0.7 }
-        ];
-        claps.forEach(c => setTimeout(() => playTone(c.freq, 0.08, c.vol), c.time));
-      }
-    };
-
-    // UTILITY
-    function shuffle(arr) {
-      const a = [...arr];
-      for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-      }
-      return a;
-    }
-
-    function makeItems() {
-      const puzzle = currentPuzzles[currentPuzzleIndex];
-      return shuffle(puzzle.groups.flatMap(g => 
-        g.items.map(emoji => ({ emoji, group: g.name }))
-      ));
-    }
-
-    function isFound(item) {
-      return found.some(g => g.items.some(i => i.emoji === item.emoji));
-    }
-
-    function isSelected(item) {
-      return selected.some(s => s.emoji === item.emoji);
-    }
-
-    // SCREEN MANAGEMENT
-    function showScreen(screenId) {
-      document.getElementById('homeScreen').classList.remove('active');
-      document.getElementById('gameScreen').classList.remove('active');
-      document.getElementById(screenId).classList.add('active');
-    }
-
-    function updateHomeScreen() {
-      const today = new Date();
-      document.getElementById('todayDate').textContent = today.toDateString();
-      const score = calculateScore(dailyProgress);
-      document.getElementById('todayScore').textContent = `${score}/600`;
-      
-      ['easy', 'medium', 'hard'].forEach(diff => {
-        const completed = dailyProgress[diff].completed.length;
-        document.getElementById(`${diff}Status`).textContent = `${completed}/2 done`;
-      });
-    }
-
-    function startGame(difficulty) {
-      currentDifficulty = difficulty;
-      currentPuzzles = getTodaysPuzzles(difficulty);
-      currentPuzzleIndex = 0;
-      showScreen('gameScreen');
-      setTimeout(() => restart(), 50);
-    }
-
-    function goHome() {
-      showScreen('homeScreen');
-      updateHomeScreen();
-      confettiParticles = [];
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-    // RENDER
-    function render() {
-      renderPuzzleName();
-      renderStrikes();
-      renderFoundGroups();
-      renderGrid();
-      updateButtons();
-    }
-
-    function renderPuzzleName() {
-      document.getElementById('puzzleName').textContent = 
-        `${currentDifficulty.toUpperCase()} ${currentPuzzles[currentPuzzleIndex].name}`;
-      document.getElementById('prevBtn').disabled = currentPuzzleIndex === 0;
-      document.getElementById('nextBtn').disabled = currentPuzzleIndex === currentPuzzles.length - 1;
-    }
-
-    function renderStrikes() {
-      const gameWon = found.length === currentPuzzles[currentPuzzleIndex].groups.length;
-      const gameLost = strikes >= maxStrikes;
-      
-      if (gameWon || gameLost) {
-        document.getElementById('strikes').style.display = 'none';
-      } else {
-        document.getElementById('strikes').style.display = 'block';
-        document.getElementById('strikes').textContent = 
-          `${'❤️'.repeat(maxStrikes - strikes)}${'🖤'.repeat(strikes)}`;
-      }
-    }
-
-    function renderFoundGroups() {
-      const container = document.getElementById('foundGroups');
-      container.innerHTML = '';
-      found.forEach(group => {
-        const row = document.createElement('div');
-        row.className = 'group-row';
-        const label = document.createElement('div');
-        label.className = 'group-label';
-        label.textContent = group.name;
-        row.appendChild(label);
-        const itemsDiv = document.createElement('div');
-        itemsDiv.className = 'group-items';
-        group.items.forEach(item => {
-          const card = document.createElement('div');
-          card.className = 'card found';
-          card.textContent = item.emoji;
-          itemsDiv.appendChild(card);
-        });
-        row.appendChild(itemsDiv);
-        container.appendChild(row);
-      });
-    }
-
-    function renderGrid() {
-      const grid = document.getElementById('grid');
-      grid.innerHTML = '';
-      items.forEach((item) => {
-        if (!isFound(item)) {
-          const card = document.createElement('div');
-          card.className = 'card';
-          if (isSelected(item)) card.classList.add('selected');
-          card.textContent = item.emoji;
-          card.onclick = () => clickCard(item);
-          grid.appendChild(card);
-        }
-      });
-    }
-
-    function updateButtons() {
-      const gameWon = found.length === currentPuzzles[currentPuzzleIndex].groups.length;
-      const gameLost = strikes >= maxStrikes;
-      document.getElementById('checkBtn').textContent = `Check (${selected.length}/4)`;
-      document.getElementById('checkBtn').disabled = selected.length !== 4 || gameWon || gameLost;
-      document.getElementById('shuffleBtn').disabled = gameWon || gameLost;
-      document.getElementById('restartBtn').textContent = (gameWon || gameLost) ? 'Again' : 'Restart';
-    }
-
-    function showMessage(text, type = '') {
-      const msg = document.getElementById('message');
-      msg.textContent = text;
-      msg.className = 'message ' + type;
-      msg.style.display = text ? 'block' : 'none';
-    }
-
-    // GAME LOGIC
-    function clickCard(item) {
-      const gameWon = found.length === currentPuzzles[currentPuzzleIndex].groups.length;
-      const gameLost = strikes >= maxStrikes;
-      if (isFound(item) || gameLost || gameWon) return;
-      
-      sounds.click();
-      if (isSelected(item)) {
-        selected = selected.filter(s => s.emoji !== item.emoji);
-      } else if (selected.length < 4) {
-        selected.push(item);
-        showMessage('');
-      }
-      render();
-    }
-
-    function checkGroup() {
-      if (selected.length !== 4) return;
-      
-      const allSame = selected.every(it => it.group === selected[0].group);
-      
-      if (allSame) {
-        sounds.correct();
-        const groupName = selected[0].group;
-        found.push({ name: groupName, items: selected });
-        showMessage(`✅ ${groupName}!`);
-        
-        if (found.length === currentPuzzles[currentPuzzleIndex].groups.length) {
-          sounds.clap();
-          showMessage('🎉 Complete!', 'win');
-          startConfetti();
-          
-          const puzzleId = `${currentDifficulty}-${currentPuzzleIndex}`;
-          if (!dailyProgress[currentDifficulty].completed.includes(puzzleId)) {
-            dailyProgress[currentDifficulty].completed.push(puzzleId);
-            saveDailyProgress(dailyProgress);
-          }
-        }
-      } else {
-        sounds.wrong();
-        strikes++;
-        if (strikes >= maxStrikes) {
-          showMessage('❌ Game Over!', 'lose');
-        } else {
-          showMessage(`❌ ${maxStrikes - strikes} left`);
-        }
-      }
-      
-      selected = [];
-      render();
-    }
-
-    function shuffleCards() {
-      sounds.click();
-      items = shuffle(items);
-      render();
-    }
-
-    function restart() {
-      items = makeItems();
-      selected = [];
-      found = [];
-      strikes = 0;
-      showMessage('');
-      confettiParticles = [];
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      render();
-    }
-
-    function changePuzzle(direction) {
-      const newIndex = currentPuzzleIndex + direction;
-      if (newIndex >= 0 && newIndex < currentPuzzles.length) {
-        currentPuzzleIndex = newIndex;
-        restart();
-      }
-    }
-
-    // EVENT LISTENERS
-    window.addEventListener('DOMContentLoaded', function() {
-      // Check if localStorage is available
-      try {
-        localStorage.setItem('test', 'test');
-        localStorage.removeItem('test');
-      } catch (e) {
-        document.getElementById('storageWarning').style.display = 'block';
-      }
-      
       document.getElementById('checkBtn').addEventListener('click', checkGroup);
       document.getElementById('shuffleBtn').addEventListener('click', shuffleCards);
       document.getElementById('restartBtn').addEventListener('click', restart);
-      document.getElementById('prevBtn').addEventListener('click', () => changePuzzle(-1));
-      document.getElementById('nextBtn').addEventListener('click', () => changePuzzle(1));
-      document.getElementById('soundToggle').addEventListener('click', () => {
-        soundEnabled = !soundEnabled;
-        document.getElementById('soundToggle').textContent = soundEnabled ? '🔊' : '🔇';
-      });
+      document.getElementById('prevBtn').addEventListener('click', ()=>changePuzzle(-1));
+      document.getElementById('nextBtn').addEventListener('click', ()=>changePuzzle(1));
+      document.getElementById('soundToggle').addEventListener('click', ()=>{ soundEnabled=!soundEnabled; document.getElementById('soundToggle').textContent=soundEnabled?'🔊':'🔇'; });
       document.getElementById('homeBtn').addEventListener('click', goHome);
-      
+
       updateHomeScreen();
     });
   </script>
