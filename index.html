@@ -450,8 +450,19 @@
       click:   () => playTone(800, 0.1),
       correct: () => { playTone(523,0.15); setTimeout(()=>playTone(659,0.15),100); setTimeout(()=>playTone(784,0.2),200); },
       wrong:   () => { playTone(200,0.15); setTimeout(()=>playTone(150,0.2),100); },
-      clap:    () => { [{t:0,f:200,v:.5},{t:100,f:220,v:.5},{t:200,f:210,v:.5},{t:400,f:200,v:.6},{t:500,f:230,v:.6},{t:600,f:220,v:.6},{t:800,f:210,v:.7},{t:900,f:230,v:.7},{t:1000,f:200,v:.7}]
-                        .forEach(c=>setTimeout(()=>playTone(c.f,0.08,c.v),c.t)); }
+      clap:    () => { 
+        // Multiple claps with realistic timing
+        const clapPattern = [
+          {t:0,f:180,v:.6},{t:50,f:200,v:.5},
+          {t:200,f:190,v:.6},{t:250,f:210,v:.5},
+          {t:400,f:185,v:.65},{t:450,f:205,v:.55},
+          {t:650,f:195,f:195,v:.7},{t:700,f:215,v:.6},
+          {t:900,f:180,v:.7},{t:950,f:200,v:.6},
+          {t:1100,f:190,v:.75},{t:1150,f:210,v:.65},
+          {t:1300,f:185,v:.75},{t:1350,f:205,v:.65}
+        ];
+        clapPattern.forEach(c=>setTimeout(()=>playTone(c.f,0.06,c.v),c.t)); 
+      }
     };
 
     // UTILS
