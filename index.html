@@ -450,18 +450,20 @@
       click:   () => playTone(800, 0.1),
       correct: () => { playTone(523,0.15); setTimeout(()=>playTone(659,0.15),100); setTimeout(()=>playTone(784,0.2),200); },
       wrong:   () => { playTone(200,0.15); setTimeout(()=>playTone(150,0.2),100); },
-      clap:    () => { 
-        // Multiple claps with realistic timing
-        const clapPattern = [
-          {t:0,f:180,v:.6},{t:50,f:200,v:.5},
-          {t:200,f:190,v:.6},{t:250,f:210,v:.5},
-          {t:400,f:185,v:.65},{t:450,f:205,v:.55},
-          {t:650,f:195,f:195,v:.7},{t:700,f:215,v:.6},
-          {t:900,f:180,v:.7},{t:950,f:200,v:.6},
-          {t:1100,f:190,v:.75},{t:1150,f:210,v:.65},
-          {t:1300,f:185,v:.75},{t:1350,f:205,v:.65}
+      cheer:   () => { 
+        // Cheering sounds with rising pitches and celebration
+        const cheerPattern = [
+          {t:0,f:400,v:.3},{t:0,f:500,v:.25},
+          {t:100,f:450,v:.35},{t:100,f:550,v:.3},
+          {t:200,f:500,v:.4},{t:200,f:600,v:.35},
+          {t:300,f:550,v:.45},{t:300,f:650,v:.4},
+          {t:400,f:600,v:.5},{t:400,f:700,v:.45},
+          {t:500,f:650,v:.55},{t:500,f:750,v:.5},
+          {t:600,f:700,v:.6},{t:600,f:800,v:.55},
+          {t:700,f:750,v:.65},{t:700,f:850,v:.6},
+          {t:800,f:800,v:.7},{t:800,f:900,v:.65}
         ];
-        clapPattern.forEach(c=>setTimeout(()=>playTone(c.f,0.06,c.v),c.t)); 
+        cheerPattern.forEach(c=>setTimeout(()=>playTone(c.f,0.15,c.v),c.t)); 
       }
     };
 
@@ -620,7 +622,7 @@
         showMessage(`✅ ${groupName}!`);
 
         if (found.length === currentPuzzles[currentPuzzleIndex].groups.length) {
-          sounds.clap();
+          sounds.cheer();
           showMessage('🎉 Complete!', 'win');
           startConfetti();
 
